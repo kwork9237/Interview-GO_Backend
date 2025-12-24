@@ -44,7 +44,7 @@ public class AIAPIController {
 	}
 	
 	// chat model + tts 처리
-	@PostMapping("tts")
+	@PostMapping("/tts")
 	public Map<String, Object> ttsResponse(@RequestParam(value="query") String q) throws Exception {
 		// AI 답변 변수
 		String answer;

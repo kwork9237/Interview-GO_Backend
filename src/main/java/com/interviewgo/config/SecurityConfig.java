@@ -7,18 +7,38 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.interviewgo.jwt.JwtAuthenticationFilter;
+import com.interviewgo.jwt.JwtTokenProvider;
+import com.interviewgo.service.jwt.CustomUserDetailsService;
+
+import lombok.RequiredArgsConstructor;
+
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+	private final JwtTokenProvider jwtTokenProvider;
+	private final CustomUserDetailsService userDetailService;
+	
+	// 비밀번호 암호화
+	@Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+        	// 
         	.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             // 1. CSRF 비활성화 (Rest API 기준)
             .csrf(AbstractHttpConfigurer::disable)
@@ -31,7 +51,12 @@ public class SecurityConfig {
             
             // 4. 기본 로그인 폼 사용 (필요 없으면 disable 가능)
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            
+            // JWT 필터 등록
+            .addFilterBefore(
+            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
+            		UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

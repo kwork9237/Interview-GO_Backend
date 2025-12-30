@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.interviewgo.mapper.YoutubeMapper">
+
+	<!-- 유튜브 영상 id, category db 저장  -->
+	<insert id="insertVideo" parameterType="youtube">
+        INSERT INTO youtube (yt_key, yt_category)
+        VALUES (#{ytKey}, #{ytCategory})
+        ON DUPLICATE KEY UPDATE yt_category = #{ytCategory}
+    </insert>
+
+	<select id="getMember" parameterType="Long">
+		SELECT * FROM member WHERE mb_uid = #{mb_uid}
+	</select>
+	
+	<select id="selectVideosByCategory" parameterType="string" resultType="youtube">
+    	SELECT yt_key as ytKey, yt_category as ytCategory 
+    	FROM youtube 
+    	WHERE yt_category = #{category}
+    </select>
+    
+    <delete id="deleteAllVideos">
+    	TRUNCATE TABLE youtube
+	</delete>
+    
+</mapper>

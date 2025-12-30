@@ -17,8 +17,9 @@ import lombok.Setter;
 @AllArgsConstructor         // 모든 필드를 매개변수로 받는 생성자    
 @NoArgsConstructor		    // 기본 생성자  
 public class CustomUserDetails implements UserDetails {
+	// 회원관리 JWT 토큰 관련하여 임시 제작
 
-//    private Long mb_uid;
+    private Long mb_uid;
     private String username;
     private String password;
     private String role;

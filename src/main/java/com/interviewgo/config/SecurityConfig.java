@@ -51,12 +51,12 @@ public class SecurityConfig {
             
             // 4. 기본 로그인 폼 사용 (필요 없으면 disable 가능)
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable);
             
-            // JWT 필터 등록
-            .addFilterBefore(
-            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
-            		UsernamePasswordAuthenticationFilter.class);
+            // JWT 필터 등록 (개발용으로 잠깐 꺼둠)
+//            .addFilterBefore(
+//            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
+//            		UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-
+	// 회원관리 JWT 토큰 관련하여 임시 제작
+	
     private final MemberMapper mbMapper;
 
     @Override
@@ -26,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         return new CustomUserDetails(
-//                member.getMb_uid(),
+                member.getMb_uid(),
         		member.getUsername(),
         		member.getMb_password(),
         		member.getRole()

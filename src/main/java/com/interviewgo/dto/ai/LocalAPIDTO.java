@@ -1,4 +1,4 @@
-package com.interviewgo.dto;
+package com.interviewgo.dto.ai;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,5 +15,7 @@ public class LocalAPIDTO {
 	@Getter @Setter
 	public static class Gemma {
 		private String answer;
+		private Long score;
+		private String feedback;
 	}
 }

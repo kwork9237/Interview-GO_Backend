@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.interviewgo.mapper.MyPageMapper">
+
+    <update id="updateMember" parameterType="com.interviewgo.dto.MemberDTO">
+        UPDATE member
+        <set>
+            <if test="mb_password != null and mb_password != ''"> mb_password = #{mb_password}, </if>
+            <if test="mb_nickname != null and mb_nickname != ''"> mb_nickname = #{mb_nickname}, </if>
+            <if test="mb_pnumber != null and mb_pnumber != ''"> mb_pnumber = #{mb_pnumber}, </if>
+            <if test="mb_icon != null and mb_icon != ''"> mb_icon = #{mb_icon}, </if>
+        </set>
+        WHERE mb_uid = #{mb_uid}
+    </update>
+
+    <select id="selectPassword" parameterType="Long" resultType="string">
+        SELECT mb_password FROM member WHERE mb_uid = #{mb_uid}
+    </select>
+
+    <select id="checkNicknameDuplicate" resultType="int">
+        SELECT COUNT(*) FROM member 
+        WHERE mb_nickname = #{nickname} 
+        AND mb_uid != #{mb_uid}
+    </select>
+
+    <delete id="deleteMember" parameterType="Long">
+        DELETE FROM member WHERE mb_uid = #{mb_uid}
+    </delete>
+
+    <select id="selectExamHistory" parameterType="Long" resultType="com.interviewgo.dto.ExamHistoryDTO">
+        SELECT 
+            h.hist_uid, h.hist_score, h.hist_date,
+            e.ex_title, e.ex_level, l.ex_lang_name
+        FROM exam_history h
+        INNER JOIN exam e ON h.ex_uid = e.ex_uid AND h.ex_lang_uid = e.ex_lang_uid
+        INNER JOIN exam_language l ON h.ex_lang_uid = l.ex_lang_uid
+        WHERE h.mb_uid = #{mb_uid}
+        ORDER BY h.hist_date DESC
+    </select>
+
+    <select id="selectInterviewHistory" parameterType="Long" resultType="com.interviewgo.dto.InterviewHistoryDTO">
+        SELECT * FROM interview_history
+        WHERE mb_uid = #{mb_uid}
+        ORDER BY iv_date DESC
+    </select>
+
+</mapper>

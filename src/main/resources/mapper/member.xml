@@ -11,7 +11,7 @@
 
 	<!-- 사용자 정보 가져오기 (임시) -->
 	<select id="getMember" parameterType="Long">
-		 SELECT * FROM member WHERE mb_uid = #{mb_uid}
+      SELECT * FROM member WHERE mb_uid = #{mb_uid}
 	</select>
 	
 	<!-- 사용자 정보 갱신 (임시) -->

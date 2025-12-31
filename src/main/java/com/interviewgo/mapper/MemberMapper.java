@@ -12,6 +12,9 @@ public interface MemberMapper {
 	// 사용자 가져오기
 	MemberDTO getMember(String memberUid);
 	
+	// 유저네임 기반 멤버 가져오기
+	MemberDTO getMemberById(String username);
+	
 	// 사용자 업데이트
 	int updateMember(MemberDTO member);
 	

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class MemberController {
 		System.out.println("mb_nickname:"+ user.getMb_nickname());
 		System.out.println("mb_pnumber:"+ user.getMb_pnumber());
 		
-        int result = memberService.insertMember(user);
+        int result =memberService.insertMember(user);
         if(result == 1) System.out.println("회원가입 성공");
         
         
@@ -41,9 +42,6 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody MemberDTO user) {
     	System.out.println("login 컨트롤로 진입");
-
-    	System.out.println("UNAME " + user.getUsername());
-    	System.out.println("UPASSWORD " + user.getMb_password());
     	
         // 인증 시도
         Authentication authentication = authenticationManager.authenticate(

@@ -33,6 +33,10 @@
       SELECT * FROM member WHERE mb_uid = #{mb_uid}
 	</select>
 	
+	<select id="getMemberById" parameterType="String">
+		SELECT * FROM member WHERE username = #{username}
+	</select>
+	
 	<!-- 사용자 정보 갱신 (임시) -->
 	<update id="updateMember" parameterType="com.interviewgo.dto.MemberDTO">
 		UPDATE member

@@ -81,10 +81,16 @@
     <!-- ===================================================== -->
     <!-- 회원 탈퇴 -->
     <!-- ===================================================== -->
+    <delete id="deleteExamHistory" parameterType="Long">
+        DELETE FROM exam_history WHERE mb_uid = #{mb_uid}
+    </delete>
+
+    <delete id="deleteInterviewHistory" parameterType="Long">
+        DELETE FROM interview_history WHERE mb_uid = #{mb_uid}
+    </delete>
+
     <delete id="deleteMember" parameterType="Long">
-        DELETE
-        FROM member
-        WHERE mb_uid = #{mb_uid}
+        DELETE FROM member WHERE mb_uid = #{mb_uid}
     </delete>
 
     <!-- ===================================================== -->

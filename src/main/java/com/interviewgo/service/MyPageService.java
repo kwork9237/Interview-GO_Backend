@@ -110,6 +110,9 @@ public class MyPageService {
             return false;
         }
         
+        myPageMapper.deleteExamHistory(mbUid);      // 코딩 기록 삭제
+        myPageMapper.deleteInterviewHistory(mbUid); // 면접 기록 삭제
+        
         return myPageMapper.deleteMember(mbUid) > 0;
     }
 }

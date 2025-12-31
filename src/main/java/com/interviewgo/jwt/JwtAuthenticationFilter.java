@@ -4,8 +4,8 @@ import java.io.IOException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-//import com.interviewgo.service.jwt.CustomUserDetails;
-//import com.interviewgo.service.jwt.CustomUserDetailsService;
+import com.interviewgo.service.jwt.CustomUserDetails;
+import com.interviewgo.service.jwt.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,11 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-//    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
-//        this.userDetailsService = userDetailsService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -38,11 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("[JWT 필터] 유효한 토큰입니다. username: " + username);
 
                     // 5. UserDetails 로드
-//                    CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
+                    CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
                     // 6. 인증 객체 생성
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
- //                          userDetails, null, userDetails.getAuthorities()
+                           userDetails, null, userDetails.getAuthorities()
                     );
 
                     // 7. SecurityContext에 저장 (인증 완료)

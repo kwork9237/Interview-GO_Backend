@@ -6,6 +6,8 @@ import com.interviewgo.dto.MemberDTO;
 
 @Mapper
 public interface MemberMapper {
+	// JWT 토큰 관련하여 임시 생성
+	
 	// 사용자 추가
 	int insertMember(MemberDTO member);
 	

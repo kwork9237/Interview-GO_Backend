@@ -39,13 +39,15 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/news/**").permitAll() 
-                .requestMatchers("/**").permitAll()         
-                .anyRequest().authenticated()
-           )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailService), 
-                             UsernamePasswordAuthenticationFilter.class);
+        	.authorizeHttpRequests(auth -> auth
+        	    .requestMatchers("/api/admin/youtube/check").permitAll()
+        	    .anyRequest().permitAll()
+        	);	
+          // JWT 필터 등록 (개발용으로 잠깐 꺼둠)
+//            .addFilterBefore(
+//            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
+//            		UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

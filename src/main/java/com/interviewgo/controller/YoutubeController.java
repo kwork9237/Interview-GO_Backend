@@ -30,8 +30,10 @@ public class YoutubeController {
     }
     
     @GetMapping("/check")
-    public List<YoutubeDTO> checkData(@RequestParam("category") String category) {
-        // Service를 통해 DB에서 데이터를 가져옵니다.
+    public List<YoutubeDTO> check(@RequestParam(value = "category", required = false) String category) {
+        if (category == null || category.isEmpty()) {
+            category = "면접 꿀팁"; 
+        }
         return youtubeService.getVideosByCategory(category);
     }
 }

@@ -1,4 +1,4 @@
-package com.interviewgo.service;
+package com.interviewgo.service.ai;
 
 import java.io.FileInputStream;
 
@@ -15,6 +15,8 @@ import com.google.cloud.texttospeech.v1.VoiceSelectionParams;
 import com.google.cloud.texttospeech.v1.AudioConfig;
 import com.google.cloud.texttospeech.v1.AudioEncoding;
 import com.google.protobuf.ByteString;
+
+// 구글 TTS API를 이용하기 위한 서비스
 
 @Service
 public class GoogleTTSService {

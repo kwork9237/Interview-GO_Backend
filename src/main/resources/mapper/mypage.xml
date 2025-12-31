@@ -2,46 +2,119 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!--
+    마이페이지 관련 MyBatis Mapper
+    - 회원 정보 조회/수정
+    - 닉네임 중복 체크
+    - 시험 / 면접 이력 조회
+-->
 <mapper namespace="com.interviewgo.mapper.MyPageMapper">
 
+    <!-- ===================================================== -->
+    <!-- 회원 기본 정보 조회 -->
+    <!-- ===================================================== -->
+    <select id="getMemberInfo" parameterType="Long" resultType="com.interviewgo.dto.MemberDTO">
+        SELECT 
+            mb_uid,        <!-- 회원 고유 ID -->
+            username,      <!-- 로그인 아이디 -->
+            mb_password,   <!-- 비밀번호 (암호화된 값) -->
+            mb_nickname,   <!-- 닉네임 -->
+            mb_pnumber,    <!-- 전화번호 -->
+            mb_icon,       <!-- 프로필 이미지 -->
+            role,          <!-- 권한/등급 -->
+            mb_date        <!-- 가입일 -->
+        FROM member
+        WHERE mb_uid = #{mb_uid}
+    </select>
+
+    <!-- ===================================================== -->
+    <!-- 회원 정보 수정 -->
+    <!-- null 또는 빈 값이 아닌 필드만 동적으로 UPDATE -->
+    <!-- ===================================================== -->
     <update id="updateMember" parameterType="com.interviewgo.dto.MemberDTO">
         UPDATE member
         <set>
-            <if test="mb_password != null and mb_password != ''"> mb_password = #{mb_password}, </if>
-            <if test="mb_nickname != null and mb_nickname != ''"> mb_nickname = #{mb_nickname}, </if>
-            <if test="mb_pnumber != null and mb_pnumber != ''"> mb_pnumber = #{mb_pnumber}, </if>
-            <if test="mb_icon != null and mb_icon != ''"> mb_icon = #{mb_icon}, </if>
+            <!-- 비밀번호 변경 (선택) -->
+            <if test="mb_password != null and mb_password != ''">
+                mb_password = #{mb_password},
+            </if>
+
+            <!-- 닉네임 변경 (선택) -->
+            <if test="mb_nickname != null and mb_nickname != ''">
+                mb_nickname = #{mb_nickname},
+            </if>
+
+            <!-- 전화번호 변경 (선택) -->
+            <if test="mb_pnumber != null and mb_pnumber != ''">
+                mb_pnumber = #{mb_pnumber},
+            </if>
+
+            <!-- 프로필 이미지 변경 (선택) -->
+            <if test="mb_icon != null and mb_icon != ''">
+                mb_icon = #{mb_icon},
+            </if>
         </set>
         WHERE mb_uid = #{mb_uid}
     </update>
 
+    <!-- ===================================================== -->
+    <!-- 비밀번호 조회 -->
+    <!-- 비밀번호 검증용 (수정 전 확인) -->
+    <!-- ===================================================== -->
     <select id="selectPassword" parameterType="Long" resultType="string">
-        SELECT mb_password FROM member WHERE mb_uid = #{mb_uid}
+        SELECT mb_password
+        FROM member
+        WHERE mb_uid = #{mb_uid}
     </select>
 
+    <!-- ===================================================== -->
+    <!-- 닉네임 중복 체크 -->
+    <!-- 자기 자신(mb_uid)은 제외하고 동일 닉네임 존재 여부 확인 -->
+    <!-- ===================================================== -->
     <select id="checkNicknameDuplicate" resultType="int">
-        SELECT COUNT(*) FROM member 
+        SELECT COUNT(*)
+        FROM member 
         WHERE mb_nickname = #{nickname} 
         AND mb_uid != #{mb_uid}
     </select>
 
+    <!-- ===================================================== -->
+    <!-- 회원 탈퇴 -->
+    <!-- ===================================================== -->
     <delete id="deleteMember" parameterType="Long">
-        DELETE FROM member WHERE mb_uid = #{mb_uid}
+        DELETE
+        FROM member
+        WHERE mb_uid = #{mb_uid}
     </delete>
 
+    <!-- ===================================================== -->
+    <!-- 코딩 테스트 풀이 이력 조회 -->
+    <!-- exam / exam_language 테이블과 조인 -->
+    <!-- ===================================================== -->
     <select id="selectExamHistory" parameterType="Long" resultType="com.interviewgo.dto.ExamHistoryDTO">
         SELECT 
-            h.hist_uid, h.hist_score, h.hist_date,
-            e.ex_title, e.ex_level, l.ex_lang_name
+            h.hist_uid,        <!-- 풀이 이력 ID -->
+            h.hist_score,      <!-- 점수 -->
+            h.hist_date,       <!-- 풀이 날짜 -->
+            e.ex_title,        <!-- 문제 제목 -->
+            e.ex_level,        <!-- 난이도 -->
+            l.ex_lang_name     <!-- 사용 언어 -->
         FROM exam_history h
-        INNER JOIN exam e ON h.ex_uid = e.ex_uid AND h.ex_lang_uid = e.ex_lang_uid
-        INNER JOIN exam_language l ON h.ex_lang_uid = l.ex_lang_uid
+        INNER JOIN exam e 
+            ON h.ex_uid = e.ex_uid 
+            AND h.ex_lang_uid = e.ex_lang_uid
+        INNER JOIN exam_language l 
+            ON h.ex_lang_uid = l.ex_lang_uid
         WHERE h.mb_uid = #{mb_uid}
         ORDER BY h.hist_date DESC
     </select>
 
+    <!-- ===================================================== -->
+    <!-- 면접 연습 이력 조회 -->
+    <!-- ===================================================== -->
     <select id="selectInterviewHistory" parameterType="Long" resultType="com.interviewgo.dto.InterviewHistoryDTO">
-        SELECT * FROM interview_history
+        SELECT *
+        FROM interview_history
         WHERE mb_uid = #{mb_uid}
         ORDER BY iv_date DESC
     </select>

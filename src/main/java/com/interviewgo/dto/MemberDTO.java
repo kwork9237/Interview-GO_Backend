@@ -15,7 +15,7 @@ public class MemberDTO {
 	private String mb_password;
 	private String mb_nickname;
 	private String mb_pnumber;
-	private String mb_icon;
+	private String mb_icon;	
 	private String role;
 	private Date mb_date;
 }

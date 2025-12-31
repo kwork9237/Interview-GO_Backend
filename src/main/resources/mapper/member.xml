@@ -5,9 +5,28 @@
 
 <mapper namespace="com.interviewgo.mapper.MemberMapper">
 	<!-- 사용자 정보 입력 (임시) -->
+	<!-- <insert id="insertMember" parameterType="com.interviewgo.dto.MemberDTO">
+		insert into member(username,mb_password,mb_nickname,mb_pnumber,role,mb_date)	
+		values(#{username},#{mb_password},#{mb_nickname},#{mb_pnumber},#{role},now())
+	</insert> -->
+	
 	<insert id="insertMember" parameterType="com.interviewgo.dto.MemberDTO">
-		
-	</insert>
+        INSERT INTO member (
+            username, 
+            mb_password, 
+            mb_nickname, 
+            mb_pnumber, 
+            role, 
+            mb_date
+        ) VALUES (
+            #{username}, 
+            #{mb_password}, 
+            #{mb_nickname}, 
+            #{mb_pnumber}, 
+            #{role}, 
+            NOW()
+        )
+    </insert>
 
 	<!-- 사용자 정보 가져오기 (임시) -->
 	<select id="getMember" parameterType="Long">

@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interviewgo.controller.AIAPIController;
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
+import com.interviewgo.dto.interview.InterviewSessionDTO;
 import com.interviewgo.mapper.interview.InterviewHistoryMapper;
+import com.interviewgo.mapper.interview.InterviewSessionMapper;
 import com.interviewgo.service.jwt.CustomUserDetails;
 import com.interviewgo.utils.UUIDUtils;
 
@@ -23,8 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class InterviewController {
 	
 	// 빠른 테스트용.
-	private final InterviewHistoryMapper interviewHistoryDAO;
-	private final AIAPIController aiapi;
+	private final InterviewHistoryMapper HistoryDAO;
+	private final InterviewSessionMapper SessionDAO;
 	
 	// 면접 시작을 하기 위한 기본조건
 	@PostMapping("/setup")
@@ -40,9 +41,13 @@ public class InterviewController {
         String sessionId = UUIDUtils.GenerateUUID();
 
         // 3. DB 저장 (interview_temp 테이블)
-        
-        
-        System.out.println("InterviewController (Setup) >> " + sessionId);
+        InterviewSessionDTO sessionData = new InterviewSessionDTO();
+        sessionData.setIv_ssid(sessionId);
+        sessionData.setMb_uid(userId);
+        SessionDAO.insertInterviewSession(sessionData);
+
+        System.out.println("InterviewController (ssid) >> " + sessionId);
+        System.out.println("InterviewController (userid) >> " + userId);
 
         // 4. 생성된 UUID 반환
         return ResponseEntity.ok(Map.of("sid", sessionId));
@@ -58,39 +63,30 @@ public class InterviewController {
 	        return ResponseEntity.badRequest().body("유효하지 않은 세션입니다.");
 	    }
 		
-
 		// 면접 시작
         String firstMsg = "안녕하세요. 자기소개 부탁드립니다.";
 
-        InterviewHistoryDTO dto = new InterviewHistoryDTO();
+        InterviewHistoryDTO dto = HistoryDAO.getInterviewHistortByID(ssid);
         
-        dto.setIv_ssid(ssid);
-        dto.setMb_uid(0L);
-        dto.setIv_step((short) 1);
-        dto.setIv_context(firstMsg);
-        dto.setIv_score(0);
-        dto.setIv_feedback("");
-        
-        // db에 정보 삽입
-        interviewHistoryDAO.insertInterviewHistory(dto);
+        if(dto == null) {
+        	dto = new InterviewHistoryDTO();
+
+            dto.setIv_ssid(ssid);
+            dto.setMb_uid(0L);			// 임시값임
+            dto.setIv_step((short) 1);
+            dto.setIv_context(firstMsg);
+            dto.setIv_score(0);
+            dto.setIv_feedback("");
+
+            try {
+            	HistoryDAO.insertInterviewHistory(dto);
+            }
+            catch(Exception e) {
+            	System.out.println("DB에 중복되는 ssid 및 step를 insert 시도함");
+            }
+        }
         
         // 2. 프론트에 첫 질문 던지기
         return ResponseEntity.ok(Map.of("text", firstMsg));
     }
-	
-	// 면접 질의응답
-	@PostMapping("/answer")
-	//  Map<String, Object> 반환타입
-	public void ask(String query, String ssid) {
-	    // 1. AI API 호출 (기존 chat-local 로직)
-		aiapi.chatResponseLocal(query, ssid);
-
-	    // 2. JSON 파싱 예시 (간단하게 Map으로 변환)
-	    // Map<String, Object> aiResult = objectMapper.readValue(rawJson, Map.class);
-	    
-	    // 3. Mapper 직접 호출해서 저장
-	    // interviewMapper.insertResponse(ssid, query, aiResult.get("answer"), aiResult.get("score"), aiResult.get("feedback"));
-
-//	    return Map.of("data", rawJson); // 프론트에는 원본 혹은 가공된 데이터 전달
-	}
 }

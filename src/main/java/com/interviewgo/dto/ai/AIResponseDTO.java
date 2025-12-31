@@ -1,21 +1,20 @@
 package com.interviewgo.dto.ai;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-// 로컬 API 테스트용 DTO
-public class LocalAPIDTO {
-	@Getter @Setter
+// AI의 답변 DTO
+public class AIResponseDTO {
+	@Data
 	public static class Whisper {
 		private String query;
 		private String language;
 		private Double probability;
 	}
-	
-	@Getter @Setter
-	public static class Gemma {
+
+	@Data
+	public static class Chat {
 		private String answer;
-		private Long score;
+		private Double score;
 		private String feedback;
 	}
 }

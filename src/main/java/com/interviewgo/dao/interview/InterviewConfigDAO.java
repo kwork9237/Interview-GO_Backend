@@ -1,14 +1,7 @@
 package com.interviewgo.dao.interview;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.interviewgo.mapper.interview.InterviewHistoryMapper;
-
-@Service
 public class InterviewConfigDAO {
-	@Autowired
-	private InterviewHistoryMapper mapper;
+
 }
 
 

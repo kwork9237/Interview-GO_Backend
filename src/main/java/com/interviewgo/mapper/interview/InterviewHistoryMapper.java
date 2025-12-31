@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.interviewgo.dto.interview.InterviewConfigDTO;
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
 
 @Mapper

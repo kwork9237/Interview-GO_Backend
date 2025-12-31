@@ -11,7 +11,8 @@
 	</select>
 	
 	<select id="getInterviewHistortByID">
-	
+		<!-- 멤버 UID는 일시적으로 제거함 (2025 12 31) -->
+		SELECT * FROM interview_history WHERE iv_ssid = #{iv_ssid} ORDER BY iv_step DESC LIMIT 1
 	</select>
 	
 	

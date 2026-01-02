@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.interviewgo.mapper.Work24Mapper">
+
+	<insert id="insertNews" parameterType="worknews">
+        INSERT INTO work24_news (
+            wkseqno, 
+            wktitle, 
+            wk_busi_nm, 
+            co_clcd_nm, 
+            wk_endt, 
+            wk_homepg_url
+        ) VALUES (
+            #{empSeqno}, 
+            #{empWantedTitle}, 
+            #{empBusiNm}, 
+            #{coClcdNm}, 
+            #{empWantedEndt}, 
+            #{empWantedHomepgDetail}
+        )
+        /* 중복 데이터가 들어올 경우 업데이트 (PK가 wkseqno이므로) */
+        ON DUPLICATE KEY UPDATE
+            wktitle = #{empWantedTitle},
+            wk_endt = #{empWantedEndt},
+            wk_homepg_url = #{empWantedHomepgDetail}
+    </insert>
+    
+    <select id="selectNewsList" resultType="worknews">
+    SELECT 
+        wkseqno AS empSeqno,
+        wktitle AS empWantedTitle,
+        wk_busi_nm AS empBusiNm,
+        co_clcd_nm AS coClcdNm,
+        wk_endt AS empWantedEndt,
+        wk_homepg_url AS empWantedHomepgDetail
+    FROM work24_news
+    WHERE STR_TO_DATE(wk_endt, '%Y-%m-%d') >= CURDATE()
+    ORDER BY wk_endt ASC  /* 마감일이 임박한 순서대로 정렬 */
+    LIMIT 30
+	</select>
+    
+</mapper>

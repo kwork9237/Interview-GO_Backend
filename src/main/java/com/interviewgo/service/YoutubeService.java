@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +41,9 @@ public class YoutubeService {
     /**
      * 카테고리별로 영상을 6개씩 검색해서 DB에 저장하는 핵심 메서드
      */
+    
+    // 월요일 새벽 5시마다 정보 초기화 
+    @Scheduled(cron = "0 0 5 * * MON" )
     @Transactional
     public void fetchAndSaveVideos() {
     	youtubeMapper.deleteAllVideos();

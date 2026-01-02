@@ -1,6 +1,7 @@
 package com.interviewgo.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.interviewgo.dto.MemberDTO;
 
@@ -20,4 +21,10 @@ public interface MemberMapper {
 	
 	// 사용자 제거
 	int deleteMember(String memberUid);
+	
+	// 1. 회원 존재 여부 확인 (1이면 존재, 0이면 없음)
+    int checkUserExists(MemberDTO member);
+
+    // 2. 비밀번호 업데이트
+    void updatePassword(MemberDTO member);
 }

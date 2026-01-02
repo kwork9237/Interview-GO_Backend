@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.jwt.JwtTokenProvider;
+import com.interviewgo.dto.FindPwResponse;
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.service.MemberService;
 
@@ -39,7 +40,7 @@ public class MemberController {
 	
 	// 로그인 API - JWT 발급
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody MemberDTO user) {
+    public ResponseEntity<?> login(@RequestBody MemberDTO user) {
     	System.out.println("login 컨트롤로 진입");
 
     	System.out.println("UNAME " + user.getUsername());
@@ -58,4 +59,24 @@ public class MemberController {
 		return ResponseEntity.ok(token);                             // token 문자열만 반환(key가 없는 형태)   
     }
 	
+    // 비번 찾기
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestBody MemberDTO request) {
+        try {
+            // 서비스 호출
+            String tempPw = memberService.createTempPassword(request);
+            
+            // 성공 시: { "tempPassword": "0000", "message": "..." } 반환
+            return ResponseEntity.ok(new FindPwResponse(tempPw, "임시 비밀번호 발급 성공"));
+
+        } catch (IllegalArgumentException e) {
+            // 유저 없음 에러 (400 Bad Request)
+            return ResponseEntity.badRequest().body(new FindPwResponse(null, e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(new FindPwResponse(null, "서버 오류 발생"));
+        }
+    }
+    
+    
 }

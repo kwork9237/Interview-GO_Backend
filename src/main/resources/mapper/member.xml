@@ -29,9 +29,9 @@
     </insert>
 
 	<!-- 사용자 정보 가져오기 (임시) -->
-	<select id="getMember" parameterType="Long">
+	<!-- <select id="getMember" parameterType="Long">
       SELECT * FROM member WHERE mb_uid = #{mb_uid}
-	</select>
+	</select> -->
 	
 	<select id="getMemberById" parameterType="String">
 		SELECT * FROM member WHERE username = #{username}
@@ -47,4 +47,19 @@
 			mb_icon = #{mb_icon}
 		WHERE mb_uid = #{mb_uid}
 	</update>
+	
+	<!-- 비번찾기(회원인증) -->
+	<select id="checkUserExists" parameterType="member" resultType="int">
+        select count(*)
+        from member
+        where username = #{username}
+          and mb_pnumber = #{mb_pnumber}
+    </select>
+
+	<!-- 임시비번 업데이트 -->
+    <update id="updatePassword" parameterType="member" >
+       update member
+        set mb_password = #{mb_password}
+        where username = #{username}
+    </update>
 </mapper>

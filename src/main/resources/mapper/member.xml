@@ -10,6 +10,14 @@
 		values(#{username},#{mb_password},#{mb_nickname},#{mb_pnumber},#{role},now())
 	</insert> -->
 	
+	<!-- username 중복검사 -->
+	<select id="countByUsername" parameterType="String" resultType="int">
+        SELECT COUNT(*) 
+        FROM member 
+        WHERE username = #{username}
+    </select>
+
+	<!-- 회원가입 -->	
 	<insert id="insertMember" parameterType="com.interviewgo.dto.MemberDTO">
         INSERT INTO member (
             username, 

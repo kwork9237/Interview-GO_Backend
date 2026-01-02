@@ -4,8 +4,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.jwt.JwtTokenProvider;
@@ -22,7 +24,14 @@ public class MemberController {
 	private final MemberService memberService;
 	private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-	
+    
+    // username 중복검사
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkIdDuplicate(@RequestParam("username") String username) {
+        boolean isAvailable = memberService.isUsernameAvailable(username);
+        return ResponseEntity.ok(isAvailable);
+    }
+    
 	@PostMapping("/join")
 	 public ResponseEntity<String> signup(@RequestBody MemberDTO user) {
 		System.out.println("컨트롤로 진입");

@@ -7,6 +7,10 @@ import com.interviewgo.dto.MemberDTO;
 
 @Mapper
 public interface MemberMapper {
+	
+	// 해당 username을 가진 회원의 수를 반환 (0이면 없음, 1 이상이면 있음)
+    int countByUsername(String username);
+	
 	// 사용자 추가
 	int insertMember(MemberDTO member);
 	

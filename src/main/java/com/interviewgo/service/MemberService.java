@@ -17,6 +17,14 @@ public class MemberService {
 	
 	private final MemberMapper mapper;
 	private final PasswordEncoder passwordEncoder;
+	
+	
+	public boolean isUsernameAvailable(String username) {
+        // COUNT(*) 결과가 0이어야 중복이 아님 (사용 가능)
+        int count = mapper.countByUsername(username);
+        
+        return count == 0; // 0이면 true(사용가능), 아니면 false(중복)
+    }	
 
 	public int insertMember(MemberDTO user) {
 		 user.setMb_password(passwordEncoder.encode(user.getMb_password())); // 비밀번호 암호화

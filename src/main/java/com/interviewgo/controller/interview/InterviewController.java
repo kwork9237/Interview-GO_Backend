@@ -1,9 +1,11 @@
 package com.interviewgo.controller.interview;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,8 +48,8 @@ public class InterviewController {
         sessionData.setMb_uid(userId);
         SessionDAO.insertInterviewSession(sessionData);
 
-        System.out.println("InterviewController (ssid) >> " + sessionId);
-        System.out.println("InterviewController (userid) >> " + userId);
+//        System.out.println("InterviewController (ssid) >> " + sessionId);
+//        System.out.println("InterviewController (userid) >> " + userId); 
 
         // 4. 생성된 UUID 반환
         return ResponseEntity.ok(Map.of("sid", sessionId));
@@ -66,7 +68,7 @@ public class InterviewController {
 		// 면접 시작
         String firstMsg = "안녕하세요. 자기소개 부탁드립니다.";
 
-        InterviewHistoryDTO dto = HistoryDAO.getInterviewHistortByID(ssid);
+        InterviewHistoryDTO dto = HistoryDAO.getInterviewHistoryById(ssid);
         
         if(dto == null) {
         	dto = new InterviewHistoryDTO();
@@ -89,4 +91,14 @@ public class InterviewController {
         // 2. 프론트에 첫 질문 던지기
         return ResponseEntity.ok(Map.of("text", firstMsg));
     }
+	
+	
+	// 채팅 기록 유지 (조회)
+	@GetMapping("/history")
+	public ResponseEntity<?> getChatHistory(@RequestParam(value="sid") String ssid) {
+		List<InterviewHistoryDTO> hist = HistoryDAO.getAllInterviewHistoryById(ssid);
+		
+		return ResponseEntity.ok(Map.of("data", hist));
+	}
+	
 }

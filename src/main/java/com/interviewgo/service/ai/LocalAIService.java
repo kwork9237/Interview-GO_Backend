@@ -39,7 +39,7 @@ public class LocalAIService {
 	}
 	
 	// ssid는 db에 받아서 재입력 용도임.
-	public AIResponseDTO.Chat requestGemma(String query, String ssid) {
+	public Map<String, Object> requestGemma(String query, String ssid) {
 		// 테스트용 자동쿼리
 		query = "spring boot를 공부했습니다";
 		query = """ 
@@ -80,11 +80,18 @@ public class LocalAIService {
                 .retrieve()
                 .bodyToMono(AIResponseDTO.Chat.class)
                 .block();
-		
+
 		// 현재 세션의 history를 다시 가져와 DB에 답변 결과 삽입
 		aiProcessing.recordHistory(ssid, res.getAnswer(), res.getFeedback(), res.getScore());
+		
+		// 결고 맵
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("answer", res.getAnswer());
+		resultMap.put("score", res.getScore());
+		resultMap.put("feedback", res.getFeedback());
+		resultMap.put("isLast", step >= 6);				// is last 로 면접 종료 제어
 
-		return res;
+		return resultMap;
 	}
 }
 

@@ -34,7 +34,11 @@ public class AIController {
 	
 	// chat model + tts 처리
 	@PostMapping("/server/tts")
-	public Map<String, Object> ttsResponseAPI(@RequestParam(value="q") String query, @RequestParam(value="sid")String ssid) throws Exception {
+	public Map<String, Object> ttsResponseAPI(
+			@RequestParam(value="q") String query,
+			@RequestParam(value="sid") String ssid
+//			@RequestParam(value="") 
+		) throws Exception {
 
 		AIResponseDTO.Chat res = apiAi.requestGemini(query, ssid);		
 		byte[] audoiBytes = apiAi.requestGoogleTTS(res.getAnswer());
@@ -55,9 +59,9 @@ public class AIController {
 	@GetMapping("/local/chat")
 	public Map<String, Object> chatResponseLocal(@RequestParam(value="q")String query, @RequestParam(value="sid")String ssid) {
 	    // 1. 로컬 AI(파이썬) 서버 호출
-	    AIResponseDTO.Chat response = localAi.requestGemma(query, ssid);
+//	    AIResponseDTO.Chat response = localAi.requestGemma(query, ssid);
 	    
-	    // 결과 반환
-	    return Map.of("data", response); 
+	    // 결과 반환 + 파이선 서버 호출
+	    return Map.of("data", localAi.requestGemma(query, ssid)); 
 	}
 }

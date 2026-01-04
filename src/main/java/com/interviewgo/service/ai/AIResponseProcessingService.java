@@ -19,11 +19,12 @@ public class AIResponseProcessingService {
 	@Transactional
     public short recordHistory(String ssid, String context, String feedback, double score) {
         // 1. 기존 히스토리 정보 가져오기 (Step 계산 등을 위해)
-        InterviewHistoryDTO hist = historyDAO.getInterviewHistoryById(ssid);
+        InterviewHistoryDTO hist = historyDAO.getLastInterviewHistoryBySsid(ssid);
         
         short step = (short) (hist.getIv_step() + 1);
         
         // 2. 데이터 세팅
+        // 대화기록, 피드백, 점수 갱신
         hist.setIv_context(context);
         hist.setIv_feedback(feedback != null ? feedback : "");
         hist.setIv_score(score);

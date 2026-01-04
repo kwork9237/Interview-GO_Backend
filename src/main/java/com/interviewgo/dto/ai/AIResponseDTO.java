@@ -4,6 +4,8 @@ import lombok.Data;
 
 // AI의 답변 DTO
 public class AIResponseDTO {
+	
+	// Whisper AI 반환값
 	@Data
 	public static class Whisper {
 		private String query;
@@ -11,6 +13,7 @@ public class AIResponseDTO {
 		private Double probability;
 	}
 
+	// Gemini, Python Local Server 반환값
 	@Data
 	public static class Chat {
 		private String answer;

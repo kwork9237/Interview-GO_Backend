@@ -1,4 +1,4 @@
-package com.interviewgo.controller.interview;
+package com.interviewgo.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -24,33 +24,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/interview")
 public class InterviewController {
-	
-	// 빠른 테스트용.
 	private final InterviewHistoryMapper HistoryDAO;
 	private final InterviewSessionMapper SessionDAO;
 	
-	// 면접 시작을 하기 위한 기본조건
+	// 면접 시작시 호출 (ssid 생성)
 	@PostMapping("/setup")
 	public ResponseEntity<?> setupInterview(
-//        @RequestBody InterviewSetupRequest request,
         @AuthenticationPrincipal CustomUserDetails userDetails // JWT에서 추출한 유저 정보
     ) {
-		
         // 1. 유저 ID 가져오기 (로그인이 안 된 상태라면 임시 ID 1 사용)
         Long userId = (userDetails != null) ? userDetails.getMb_uid() : 1L;
 
         // 2. UUID 생성
         String sessionId = UUIDUtils.GenerateUUID();
 
-        // 3. DB 저장 (interview_temp 테이블)
+        // 3. DB 저장 (interview_session 테이블)
+        // 만약 드물게도 session 중복시 오류나면 try-catch로 간단하게 로깅 후, sessionId만 다시 생성
+        // 만약 비회원일 경우 session data를 정기적으로 제거할 것인지 확인 필요
         InterviewSessionDTO sessionData = new InterviewSessionDTO();
         sessionData.setIv_ssid(sessionId);
         sessionData.setMb_uid(userId);
         SessionDAO.insertInterviewSession(sessionData);
-
-//        System.out.println("InterviewController (ssid) >> " + sessionId);
-//        System.out.println("InterviewController (userid) >> " + userId); 
-
+        
         // 4. 생성된 UUID 반환
         return ResponseEntity.ok(Map.of("sid", sessionId));
     }
@@ -59,22 +54,28 @@ public class InterviewController {
 	// 면접 시작시 호출
 	@PostMapping("/start")
 	public ResponseEntity<?> startInterview(@RequestParam(value="sid") String ssid) {
-		// ssid 검증
+		// 검증
 		if (!UUIDUtils.isValid(ssid)) {
 	        // 형식이 틀리면 여기서 바로 리턴 (에러를 던지든, 특정 상태코드를 주든 선택)
+			
+			// 2026 01 05
+			// 현재 32자이기만 하면 바로 session이 통과됨
+			// DB 조회 후에 유효한 ssid, uid, step 인지 검증해야함.
 	        return ResponseEntity.badRequest().body("유효하지 않은 세션입니다.");
 	    }
 		
 		// 면접 시작
         String firstMsg = "안녕하세요. 자기소개 부탁드립니다.";
 
-        InterviewHistoryDTO dto = HistoryDAO.getInterviewHistoryById(ssid);
+        // 마지막 대화 기록 불러오기
+        InterviewHistoryDTO dto = HistoryDAO.getLastInterviewHistoryBySsid(ssid);
         
+        // 대화 기록이 없으면 기본 대화기록 삽입.
         if(dto == null) {
         	dto = new InterviewHistoryDTO();
 
             dto.setIv_ssid(ssid);
-            dto.setMb_uid(0L);			// 임시값임
+            dto.setMb_uid(0L);			// 임시값임 추후 mb_uid를 넣어야함.
             dto.setIv_step((short) 1);
             dto.setIv_context(firstMsg);
             dto.setIv_score(0);
@@ -93,10 +94,11 @@ public class InterviewController {
     }
 	
 	
-	// 채팅 기록 유지 (조회)
+	// 채팅 기록 유지 (새로고침 시 데이터 증발 방지)
 	@GetMapping("/history")
 	public ResponseEntity<?> getChatHistory(@RequestParam(value="sid") String ssid) {
-		List<InterviewHistoryDTO> hist = HistoryDAO.getAllInterviewHistoryById(ssid);
+		// 대회내역 불러오기
+		List<InterviewHistoryDTO> hist = HistoryDAO.getAllInterviewHistoryBySsid(ssid);
 		
 		return ResponseEntity.ok(Map.of("data", hist));
 	}

@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class AIConfig {
-	// AIAPIController 의 chatClient 생성자 제거용
+	// ApiAIService 의 chatClient 생성자 제거용
 	@Bean
     ChatClient chatClient(ChatClient.Builder builder) {
         return builder.build();

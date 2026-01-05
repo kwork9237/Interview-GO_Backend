@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'eclipse'
 	id 'org.springframework.boot' version '3.5.9'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -20,8 +21,13 @@ configurations {
 	}
 }
 
+configurations.all {
+    exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-xml'
+}
+
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' } // 코모란을 받기 위해 꼭 필요!
 }
 
 ext {
@@ -53,6 +59,15 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	//Youtube API
+	implementation 'com.google.api-client:google-api-client:2.0.0'
+	implementation 'com.google.apis:google-api-services-youtube:v3-rev20251217-2.0.0'
+	implementation 'com.google.http-client:google-http-client-jackson2:1.43.3'
+	
+	
+	implementation 'com.github.shin285:KOMORAN:3.3.4'
+ 
 }
 
 dependencyManagement {
@@ -64,3 +79,5 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.interviewgo.mapper.interview.InterviewConfigMapper">
+	<!-- 인터뷰 설정 Table -->
+	<insert id="insertInterviewConfig" parameterType="interviewConfig">
+		INSERT INTO interview_temp (iv_ssid, mb_uid, ai_mode, ai_gender, ai_speed)
+		VALUES (
+			#{iv_ssid},
+			#{mb_uid},
+			#{ai_mode},
+			#{ai_gender}, 
+			#{ai_speed}
+		)
+	</insert>
+	
+	<select id="selectInterviewConfig" resultType="interviewConfig" parameterType="String">
+		SELECT * FROM interview_temp
+		WHERE session_uuid = #{iv_ssid}
+	</select>
+	
+	<delete id="deleteInterviewConfig" parameterType="String">
+		DELETE interview_temp WHERE session_uuid = #{iv_ssid}
+	</delete>
+</mapper>

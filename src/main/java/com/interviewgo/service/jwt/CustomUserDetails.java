@@ -1,6 +1,8 @@
 package com.interviewgo.service.jwt;
 
 import java.util.Collection;
+
+
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor		    // 기본 생성자  
 public class CustomUserDetails implements UserDetails {
 
-//    private Long mb_uid;
+    private Long mb_uid;
     private String username;
     private String password;
     private String role;

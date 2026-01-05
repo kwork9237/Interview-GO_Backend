@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Alias("member")
 public class MemberDTO {
-	private Long mb_uid;
+	private Long mb_uid; 
 	private String username;
 	private String mb_password;
 	private String mb_nickname;

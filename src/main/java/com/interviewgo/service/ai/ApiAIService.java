@@ -49,20 +49,14 @@ public class ApiAIService {
 	    점수 산정은 100점이 만점입니다.
 	""";
 	
-	public AIResponseDTO.Chat requestGemini(String query, String ssid) {
-		
+	public AIResponseDTO.Chat requestGemini(String query, String ssid) {		
 		short step = aiProcessing.recordHistory(ssid, query, "", 0);
-		
-		//// TEST CODE
 
+		// 마지막 질문일 경우 프롬포트 추가
 		if(step >= 6) {
-			System.out.println("면접 종료 트리거입니다.");
-			
 			SYSTEM_PROMPT += "\n\n마지막 단계입니다. 면접을 정리하고 종합 평가를 내리세요.";
 		}
 
-		//// TEST CODE
-		
 		AIResponseDTO.Chat res =  chatClient.prompt()
 	        .system(SYSTEM_PROMPT) // 핵심 지시만 전달
 	        .user(query)

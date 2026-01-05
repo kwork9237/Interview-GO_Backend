@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AIResponseProcessingService {
-	// AI 반환값 공용 처리
-	
-	// DB 상호작용 빠른 테스트용
 	private final InterviewHistoryMapper historyDAO;
 	
 	@Transactional

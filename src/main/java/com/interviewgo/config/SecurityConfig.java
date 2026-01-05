@@ -46,7 +46,7 @@ public class SecurityConfig {
             // 3. 요청 권한 설정
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/**").permitAll() // 인증 없이 접근 가능
-                .anyRequest().authenticated()                  // 나머지는 인증 필요
+                .anyRequest().authenticated()       // 나머지는 인증 필요
             )
             
             // 4. 기본 로그인 폼 사용 (필요 없으면 disable 가능)

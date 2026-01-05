@@ -66,7 +66,9 @@ public class LocalAIService {
 		resultMap.put("answer", res.getAnswer());
 		resultMap.put("score", res.getScore());
 		resultMap.put("feedback", res.getFeedback());
-		resultMap.put("isLast", step >= 6);				// is last 로 면접 종료 제어
+		
+		// 프론트쪽 ai response 분기 처리로 인해 사용해야 함.
+		resultMap.put("isLast", step >= 6);
 
 		return resultMap;
 	}

@@ -23,7 +23,7 @@ public class AIConfig {
     @Bean
     WebClient localAiWebClient() {
         return WebClient.builder()
-                .baseUrl(baseurl) // baseurl 변수나 직접 기입
+                .baseUrl(baseurl)
                 .defaultHeader("ngrok-skip-browser-warning", "69420")
                 .build();
     }

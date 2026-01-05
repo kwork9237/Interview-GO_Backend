@@ -1,8 +1,10 @@
 package com.interviewgo.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +48,9 @@ public class InterviewController {
         sessionData.setMb_uid(userId);
         SessionDAO.insertInterviewSession(sessionData);
         
+        // API SERVER 로그
+        System.out.println("[InterviewController] Setup Processing End");
+        
         // 4. 생성된 UUID 반환
         return ResponseEntity.ok(Map.of("sid", sessionId));
     }
@@ -54,14 +59,19 @@ public class InterviewController {
 	// 면접 시작시 호출
 	@PostMapping("/start")
 	public ResponseEntity<?> startInterview(@RequestParam(value="sid") String ssid) {
+		Map<String, Object> response = new HashMap<>();
+		
 		// 검증
-		if (!UUIDUtils.isValid(ssid)) {
-	        // 형식이 틀리면 여기서 바로 리턴 (에러를 던지든, 특정 상태코드를 주든 선택)
+		if (!UUIDUtils.isValid(ssid) && !ssid.equals("test")) {
+			// API SERVER 로그
+	        System.out.println("[InterviewController] Invalid Start SSID Error");
+	        
+	        response.put("message", "유효하지 않은 세션입니다.");
 			
 			// 2026 01 05
 			// 현재 32자이기만 하면 바로 session이 통과됨
 			// DB 조회 후에 유효한 ssid, uid, step 인지 검증해야함.
-	        return ResponseEntity.badRequest().body("유효하지 않은 세션입니다.");
+	        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	    }
 		
 		// 면접 시작
@@ -89,18 +99,33 @@ public class InterviewController {
             }
         }
         
+        // 처음 대화값 삽입
+        response.put("text", firstMsg);
+        
+        // API SERVER 로그
+        System.out.println("[InterviewController] Start Processing End");
+        
         // 2. 프론트에 첫 질문 던지기
-        return ResponseEntity.ok(Map.of("text", firstMsg));
+        return ResponseEntity.ok(response);
     }
 	
 	
 	// 채팅 기록 유지 (새로고침 시 데이터 증발 방지)
 	@GetMapping("/history")
 	public ResponseEntity<?> getChatHistory(@RequestParam(value="sid") String ssid) {
+		// 대화내역이 없는 경우
+		// test는 디버그 용도임
+		if(!UUIDUtils.isValid(ssid) && !ssid.equals("test")) {
+			System.out.println("[InterviewController] Invalid History SSID Error");
+
+			return new ResponseEntity<>(
+					Map.of("message", "유효하지 않은 세션입니다."),
+					HttpStatus.BAD_REQUEST);
+		}
+		
 		// 대회내역 불러오기
 		List<InterviewHistoryDTO> hist = HistoryDAO.getAllInterviewHistoryBySsid(ssid);
 		
 		return ResponseEntity.ok(Map.of("data", hist));
 	}
-	
 }

@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.interviewgo.jwt.JwtAuthenticationFilter;
@@ -43,20 +44,23 @@ public class SecurityConfig {
             // 1. CSRF 비활성화 (Rest API 기준)
             .csrf(AbstractHttpConfigurer::disable)
             
-            // 3. 요청 권한 설정
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll() // 인증 없이 접근 가능
-                .anyRequest().authenticated()       // 나머지는 인증 필요
-            )
-            
             // 4. 기본 로그인 폼 사용 (필요 없으면 disable 가능)
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            
+            .authorizeHttpRequests(auth -> auth
+            		.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+            		
+            		// AI, 면접 관련 url 허용
+            		.requestMatchers("/api/ai/**", "/api/interview/**").permitAll()
+            		
+            		.anyRequest().authenticated()
+    		)
             
             // JWT 필터 등록 (개발용으로 잠깐 꺼둠)
-//            .addFilterBefore(
-//            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
-//            		UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(
+            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService),
+            		UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

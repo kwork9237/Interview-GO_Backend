@@ -3,8 +3,30 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.interviewgo.mapper.MemberMapper">
-	<select id="getExamDetail" parameterType="int">
-		select * from exam where ex_uid = #{ex_uid}
-	</select>	
+<mapper namespace="com.interviewgo.mapper.ExamMapper">
+
+	<!-- 시험 문제 가져오기 (문제 ID 기준) -->
+	<select id="getExamDetailByUid" parameterType="int">
+		SELECT * FROM exam WHERE ex_uid = #{ex_uid}
+	</select>
+	
+	<!-- 시험 문제 가져오기 (언어 ID 기준) -->
+	<!-- 페이지네이션은 추가로 구현해야 합니다. -->
+	<select id="getExamDetailByLanguage" parameterType="int">
+		SELECT * FROM exam WHERE ex_lang_uid = #{ex_lang_uid}
+		
+		<!-- SELECT * FROM exam ex_lang_uid = #{ex_lang_uid} LIMIT #{page}, 10  -->
+	</select>
+	
+	<!-- 시험 목록 가져오기 (갯수 기반) -->
+	<!-- 페이지네이션은 추가로 구현해야 합니다. -->
+	<select id="getExamList">
+		SELECT * FROM exam
+		<!-- SELECT * FROM exam LIMIT #{page}, 10  -->
+	</select>
+	
+	<!-- 조회수 갱신 -->
+	<update id="updateExamViewCount" parameterType="int">
+		UPDATE exam SET view_count = view_count + 1 WHERE ex_uid = #{ex_uid}
+	</update>
 </mapper>

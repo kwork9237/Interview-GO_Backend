@@ -2,10 +2,13 @@ package com.interviewgo.dto;
 
 import java.sql.Date;
 
+import org.apache.ibatis.type.Alias;
+
 import lombok.Data;
 
 @Data
-public class ExamHistoryDto {
+@Alias("examHistory")
+public class ExamHistoryDTO {
 	private int hist_uid;
 	private Long mb_uid;
 	private int ex_uid;

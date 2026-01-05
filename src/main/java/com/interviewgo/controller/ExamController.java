@@ -1,9 +1,7 @@
 package com.interviewgo.controller;
 
-import com.interviewgo.dto.ExamDto;
+import com.interviewgo.dto.ExamDTO;
 import com.interviewgo.mapper.ExamMapper;
-import com.interviewgo.mapper.ExamModel;
-import com.interviewgo.service.ExamService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,32 +12,34 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/exams")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ExamController {
 
 	private final ExamMapper ExamDao;
-    private final ExamService examService;
 
-//    @GetMapping
-//    public List<ExamModel> getAllExams() {
-//        return examService.getAllExams();
-//    }
-
-    @GetMapping("/language/{langId}")
-    public List<ExamModel> getExamsByLanguage(@PathVariable int langId) {
-        return examService.getExamsByLanguage(langId);
+	// 기본 페이지에서 모든 시험문제 출력
+    @GetMapping
+    public List<ExamDTO> getAllExams() {
+    	// 나중에 페이지네이션 구현 필요
+        return ExamDao.getExamList();
     }
 
-    // 상세 조회
+    // 언어 종류벌 시험 문제 출력
+    // 페이지네이션 구현 필요
+    @GetMapping("/language/{langId}")
+    public List<ExamDTO> getExamsByLanguage(@PathVariable int langId) {
+        return ExamDao.getExamDetailByLanguage(langId);
+    }
+
+    // 상세 조회 (id 기반)
     @GetMapping("/{id}")
-    public ExamDto getExam(@PathVariable("id") int id) {
-        return ExamDao.getExamDetail(id); // 조회만
+    public ExamDTO getExam(@PathVariable("id") int uid) {
+        return ExamDao.getExamDetailByUid(uid);
     }
 
     // 조회수 증가 (POST)
     @PostMapping("/{id}/increase-view")
     public void increaseView(@PathVariable int id) {
-        examService.increaseViewCount(id); // 1씩 증가
+    	// 조회수 1 증가
+    	ExamDao.updateExamViewCount(id);
     }
-
 }

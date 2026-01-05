@@ -21,8 +21,13 @@ configurations {
 	}
 }
 
+configurations.all {
+    exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-xml'
+}
+
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' } // 코모란을 받기 위해 꼭 필요!
 }
 
 ext {
@@ -60,8 +65,8 @@ dependencies {
 	implementation 'com.google.apis:google-api-services-youtube:v3-rev20251217-2.0.0'
 	implementation 'com.google.http-client:google-http-client-jackson2:1.43.3'
 	
-	// json으로 변경 
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+	
+	implementation 'com.github.shin285:KOMORAN:3.3.4'
  
 }
 

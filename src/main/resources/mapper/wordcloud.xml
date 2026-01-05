@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.interviewgo.mapper.WordCloudMapper">
+	<delete id="deleteAllWords">
+        DELETE FROM word_cloud
+    </delete>
+    
+	<insert id="upsertWord" parameterType="wordcloud">
+        INSERT INTO word_cloud (word_text, word_count, category)
+        VALUES (#{word}, #{count}, #{category})
+        ON DUPLICATE KEY UPDATE
+            word_count = word_count + VALUES(word_count)
+    </insert>
+
+    <select id="selectTopWords" resultType="wordcloud">
+        SELECT word_text AS word, word_count AS count 
+        FROM word_cloud 
+        ORDER BY word_count DESC 
+        LIMIT 40
+    </select>
+</mapper>

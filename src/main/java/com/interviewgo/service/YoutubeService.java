@@ -15,6 +15,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.interviewgo.dto.YoutubeDTO;
 import com.interviewgo.mapper.YoutubeMapper;
 
+/**
+ * YouTube Data API v3를 연동하여 면접 및 취업 관련 영상 데이터를 자동 수집하고
+ * 카테고리별 큐레이션 기능을 제공.
+ */
 @Service
 public class YoutubeService {
 
@@ -22,7 +26,7 @@ public class YoutubeService {
     private YoutubeMapper youtubeMapper;
 
     // 설정한 API 키 가져오기
-    // secret.yml에서 youtube api key 를 지정하고 properties로 불러 왔습니다.
+    // secret.yml에서 youtube api key 를 지정함.
     //예시)
     // youtube:
     //   api:
@@ -31,7 +35,7 @@ public class YoutubeService {
     @Value("${youtube.api.key}")
     private String apiKey;
 
-    // 카테고리 (검색어) 리스트
+    // 핵심 키워드 3개를 설정해 검색 진행 
     private final String[] CATEGORIES = {
         "면접 꿀팁", 
         "개발자 기술면접", 
@@ -44,13 +48,15 @@ public class YoutubeService {
     
     // 월요일 새벽 5시마다 정보 초기화 
     @Scheduled(cron = "0 0 5 * * MON" )
-    @Transactional
+    @Transactional // 데이터 삭제와 저장이 하나의 작업 단위로 실행되도록 보장
     public void fetchAndSaveVideos() {
+    	// 1. 중복 방지 및 데이터 최신화를 위해 기존 저장된 영상 리스트를 모두 삭제
     	youtubeMapper.deleteAllVideos();
     	
         RestTemplate restTemplate = new RestTemplate();
 
         for (String category : CATEGORIES) {
+        	// 한글 검색어 URL 인코딩 처리 (UTF-8)
         	String encodedCategory = URLEncoder.encode(category, StandardCharsets.UTF_8);
             
         	String url = String.format(
@@ -68,7 +74,6 @@ public class YoutubeService {
                 JsonNode items = root.path("items");
 
                 for (JsonNode item : items) {
-                    // DTO 구조(ytKey, ytCategory)에 데이터 담기
                     YoutubeDTO dto = new YoutubeDTO();
                     
                     // 비디오 ID 추출 (yt_key)
@@ -84,11 +89,12 @@ public class YoutubeService {
                 System.out.println(" [" + category + "] 카테고리 6개 저장 완료");
 
             } catch (Exception e) {
+            	// 특정 카테고리 수집 실패 시에도 다른 카테고리 수집이 중단되지 않도록 예외 처리
                 System.err.println(" [" + category + "] 처리 중 에러 발생: " + e.getMessage());
             }
         }
     }
-    
+    // 리액트 화면 출력용 조회 메서드 
     public List<YoutubeDTO> getVideosByCategory(String category) {
         // MyBatis Mapper를 호출해서 해당 카테고리의 영상 6개를 가져옵니다.
         return youtubeMapper.selectVideosByCategory(category);

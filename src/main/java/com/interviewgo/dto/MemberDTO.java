@@ -3,26 +3,19 @@ package com.interviewgo.dto;
 import java.sql.Date;
 
 import org.apache.ibatis.type.Alias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
-// 회원 DTO
+// 회원 DTO (팀원 버전으로 통일)
 @Data
 @Alias("member")
 public class MemberDTO {
-	private Long mb_uid;
-	private String username;
-	
-	// JSON 요청/응답에서 "password"라는 키로 값을 받기 위해 사용
-	// 프론트엔드에서는 password라는 이름으로 보내지만,
-	// 서버 내부에서는 mb_password 필드를 사용하기 때문에 매핑을 맞춰준다.
-	@JsonProperty("password") 
-	private String mb_password;
-	
-	private String mb_nickname;
-	private String mb_pnumber;
-	private String mb_icon;	
-	private String role;
-	private Date mb_date;
+    private Long mb_uid;        // PK
+    private String username;    // 아이디
+    private String mb_password; // 비밀번호 (이제 프론트에서도 'mb_password'로 보내야 함)
+    private String mb_nickname; // 닉네임
+    private String mb_pnumber;  // 전화번호
+    private String mb_icon;     // 프로필 이미지 경로
+    private String role;        // 권한 (USER/ADMIN)
+    private Date mb_date;       // 가입일
 }

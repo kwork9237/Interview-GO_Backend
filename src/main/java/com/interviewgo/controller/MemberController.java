@@ -8,37 +8,43 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interviewgo.dto.FindPwResponse;
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController                  // REST API 컨트롤러
-@RequiredArgsConstructor         // final 필드 생성자 주입
+@RestController
+@RequiredArgsConstructor
 public class MemberController {
 
-    // 회원 관련 비즈니스 로직 처리
     private final MemberService memberService;
-    
-    // JWT 토큰 생성 담당
     private final JwtTokenProvider jwtTokenProvider;
-    
-    // Spring Security 인증 처리 매니저
     private final AuthenticationManager authenticationManager;
-    
-    // ===============================
-    // 회원가입 API
-    // ===============================
+
+    // =============================================================
+    // 1. 아이디 중복 확인 (조원 코드에서 가져옴)
+    // =============================================================
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkIdDuplicate(@RequestParam("username") String username) {
+        boolean isAvailable = memberService.isUsernameAvailable(username);
+        return ResponseEntity.ok(isAvailable);
+    }
+
+    // =============================================================
+    // 2. 회원가입
+    // =============================================================
     @PostMapping("/join")
     public ResponseEntity<String> signup(@RequestBody MemberDTO user) {
-        
         // 요청 확인용 로그
-        System.out.println("컨트롤러 진입: " + user.getUsername());
+        System.out.println("회원가입 요청: " + user.getUsername());
         
         // 회원 정보 DB 저장
         int result = memberService.insertMember(user);
@@ -50,75 +56,70 @@ public class MemberController {
             return ResponseEntity.status(500).body("회원가입 실패");
         }
     }
-    
-    // ===============================
-    // 로그인 API (JWT 발급)
-    // ===============================
+
+    // =============================================================
+    // 3. 로그인 (내 코드 유지 - mb_icon 및 유저 정보 포함 필수!)
+    // =============================================================
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody MemberDTO user) {
-        
-        // 로그인 요청 확인용 로그
-        System.out.println("login 컨트롤러 진입 - ID: " + user.getUsername());
+        System.out.println("로그인 요청: " + user.getUsername());
         
         try {
-            // 1️⃣ 사용자 인증 시도
-            // - username + password 를 기반으로 인증 요청
-            // - 내부적으로 CustomUserDetailsService + PasswordEncoder 사용
+            // 1️⃣ 인증 수행
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    user.getMb_password()
-                )
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getMb_password())
             );
 
-            // 2️⃣ 인증 성공 시 JWT 토큰 생성
-            // - authentication.getName() == username
-            // - role 은 현재 고정값 USER
-            String token = jwtTokenProvider.createToken(
-                authentication.getName(),
-                "USER"
-            );
+            // 2️⃣ JWT 토큰 생성
+            String token = jwtTokenProvider.createToken(authentication.getName(), "USER");
             
-            System.out.println("✅ 인증 성공! Token: " + token);
+            // 3️⃣ DB에서 상세 정보 조회 (아이콘, 닉네임 등을 위해 필요)
+            MemberDTO loginMember = memberService.getMemberByUsername(user.getUsername());
             
-            // 3️⃣ DB에서 로그인한 사용자 정보 다시 조회
-            // - 인증 객체에는 상세 사용자 정보가 부족하기 때문에
-            // - 프론트엔드에 내려줄 데이터를 위해 별도 조회 필요
-            MemberDTO loginMember =
-                memberService.getMemberByUsername(user.getUsername());
-            
-            // 4️⃣ 응답 데이터 구성
-            // - token + message + user 정보 묶어서 반환
+            // 4️⃣ 응답 데이터 구성 (Token + User Info)
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("message", "로그인 성공");
 
-            // 5️⃣ 프론트엔드에서 사용하는 user 객체 구성
+            // 프론트엔드가 사용할 유저 정보 Map 구성
             Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("mb_uid", loginMember.getMb_uid());     // 사용자 고유 ID
+            userInfo.put("mb_uid", loginMember.getMb_uid());
             userInfo.put("username", loginMember.getUsername());
             userInfo.put("mb_nickname", loginMember.getMb_nickname());
             userInfo.put("mb_pnumber", loginMember.getMb_pnumber());
+            userInfo.put("mb_icon", loginMember.getMb_icon()); // ✅ 핵심: 아이콘 정보 포함
             userInfo.put("role", loginMember.getRole());
             
-            // response에 user 정보 포함
-            response.put("user", userInfo); 
+            response.put("user", userInfo);
 
             return ResponseEntity.ok(response);
             
         } catch (BadCredentialsException e) {
-            // 비밀번호 불일치 또는 사용자 정보 오류
-            System.out.println("❌ 비밀번호 불일치");
-            return ResponseEntity
-                .status(401)
-                .body("아이디 또는 비밀번호가 틀렸습니다.");
-            
+            return ResponseEntity.status(401).body("아이디 또는 비밀번호가 틀렸습니다.");
         } catch (Exception e) {
-            // 기타 서버 오류
             e.printStackTrace();
-            return ResponseEntity
-                .status(500)
-                .body("서버 에러: " + e.getMessage());
+            return ResponseEntity.status(500).body("서버 에러: " + e.getMessage());
+        }
+    }
+
+    // =============================================================
+    // 4. 비밀번호 찾기 (조원 코드에서 가져옴)
+    // =============================================================
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestBody MemberDTO request) {
+        try {
+            // 임시 비밀번호 생성 서비스 호출
+            String tempPw = memberService.createTempPassword(request);
+            
+            // 성공 응답
+            return ResponseEntity.ok(new FindPwResponse(tempPw, "임시 비밀번호 발급 성공"));
+
+        } catch (IllegalArgumentException e) {
+            // 일치하는 회원 없음
+            return ResponseEntity.badRequest().body(new FindPwResponse(null, e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(new FindPwResponse(null, "서버 오류 발생"));
         }
     }
 }

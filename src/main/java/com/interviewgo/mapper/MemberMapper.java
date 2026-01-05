@@ -12,71 +12,79 @@ import com.interviewgo.dto.MemberDTO;
 /**
  * MemberMapper
  * ----------------------------------------------------
- * 회원 관련 DB 접근(MyBatis Mapper)
- * - 로그인 / 회원가입
- * - 마이페이지 정보 조회 및 수정
- * - 닉네임·비밀번호 검증
- * - 회원 탈퇴 및 활동 기록 관리
+ * 회원 관련 DB 접근 (통합 버전)
+ * - 조원 기능: ID 중복체크, 비밀번호 찾기, 기본 CRUD
+ * - 내 기능: 마이페이지, 활동 기록 관리, 회원 탈퇴 로직
  */
 @Mapper
 public interface MemberMapper {
 
     // ====================================================
-    // 1. 로그인 & 인증 관련
+    // 1. 로그인 & 회원가입 (공통)
     // ====================================================
 
     /**
      * 회원가입
-     * @param member 회원 정보 DTO
-     * @return insert 성공 시 1
+     * @param member 회원 정보
+     * @return 성공 시 1
      */
     int insertMember(MemberDTO member);
 
     /**
-     * 로그인용 회원 조회
+     * 로그인용 회원 조회 (Spring Security)
      * - username(ID) 기준으로 회원 정보 조회
-     * - Spring Security / JWT 인증 단계에서 사용
      */
     MemberDTO getMemberByUsername(String username);
 
+    /**
+     * 아이디 중복 확인 (조원 기능)
+     * @return 0이면 사용 가능, 1 이상이면 중복
+     */
+    int countByUsername(String username);
+
 
     // ====================================================
-    // 2. 마이페이지 관련
+    // 2. 비밀번호 찾기 (조원 기능)
     // ====================================================
 
     /**
-     * 마이페이지용 회원 정보 조회
-     * - PK(mb_uid) 기준
-     * - 외래키 연결 및 상세 정보 조회에 사용
+     * 회원 존재 여부 확인 (비밀번호 찾기용)
+     * - 아이디, 전화번호 등이 일치하는지 확인
+     * @return 1이면 존재, 0이면 없음
      */
-    MemberDTO getMemberInfo(Long mb_uid);
+    int checkUserExists(MemberDTO member);
+
+    /**
+     * 비밀번호 업데이트 (임시 비밀번호 발급 등)
+     */
+    void updatePassword(MemberDTO member);
+
+
+    // ====================================================
+    // 3. 마이페이지 (내 기능)
+    // ====================================================
+
+    /**
+     * UID 기준 회원 조회
+     * - 마이페이지 및 내부 로직에서 PK로 조회할 때 사용
+     */
+    MemberDTO getMemberByUid(Long mbUid);
 
     /**
      * 회원 정보 수정
-     * - 닉네임, 전화번호, 아이콘 등
+     * - 닉네임, 전화번호, 프로필 아이콘 등 수정
      */
     int updateMember(MemberDTO member);
 
     /**
-     * UID 기준 회원 조회
-     * - 컨트롤러/서비스에서 범용적으로 사용
-     */
-    MemberDTO getMemberByUid(Long mbUid);
-
-
-    // ====================================================
-    // 3. 검증용 유틸 메서드
-    // ====================================================
-
-    /**
-     * 비밀번호 조회
-     * - 회원 수정 / 탈퇴 시 입력 비밀번호 검증용
+     * 현재 비밀번호 조회
+     * - 정보 수정 시 기존 비밀번호 검증용
      */
     String selectPassword(Long mb_uid);
 
     /**
      * 닉네임 중복 체크
-     * - 본인(mb_uid)은 제외하고 중복 여부 확인
+     * - 내 UID(mb_uid)는 제외하고 다른 사람과 겹치는지 확인
      */
     int checkNicknameDuplicate(
         @Param("nickname") String nickname,
@@ -85,30 +93,7 @@ public interface MemberMapper {
 
 
     // ====================================================
-    // 4. 회원 탈퇴
-    // (중요: 자식 → 부모 순서로 삭제)
-    // ====================================================
-
-    /**
-     * 1단계: 코딩 테스트 기록 삭제
-     * - 회원 탈퇴 전 자식 테이블 정리
-     */
-    int deleteExamHistory(Long mb_uid);
-
-    /**
-     * 1단계: 면접 연습 기록 삭제
-     */
-    int deleteInterviewHistory(Long mb_uid);
-
-    /**
-     * 2단계: 회원 정보 삭제
-     * - 모든 자식 데이터 삭제 후 실행
-     */
-    int deleteMember(Long mb_uid);
-
-
-    // ====================================================
-    // 5. 활동 기록 조회
+    // 4. 활동 기록 조회 (내 기능)
     // ====================================================
 
     /**
@@ -120,4 +105,26 @@ public interface MemberMapper {
      * 면접 연습 기록 조회
      */
     List<InterviewHistoryDTO> selectInterviewHistory(Long mb_uid);
+
+
+    // ====================================================
+    // 5. 회원 탈퇴 (내 기능)
+    // - 자식 데이터(기록) 먼저 삭제 후 부모(회원) 삭제
+    // ====================================================
+
+    /**
+     * 1단계: 코딩 테스트 기록 삭제
+     */
+    int deleteExamHistory(Long mb_uid);
+
+    /**
+     * 1단계: 면접 연습 기록 삭제
+     */
+    int deleteInterviewHistory(Long mb_uid);
+
+    /**
+     * 2단계: 회원 정보 삭제
+     */
+    int deleteMember(Long mb_uid);
+
 }

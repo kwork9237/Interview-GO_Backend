@@ -1,13 +1,12 @@
 package com.interviewgo.service.jwt;
 
 import java.util.Collection;
-import java.util.Collections; // List.of 대신 안정적인 Collections 사용
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.interviewgo.dto.MemberDTO; // MemberDTO import 필수!
+import com.interviewgo.dto.MemberDTO; // MemberDTO import 필수
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,43 +15,30 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor         // 모든 필드를 매개변수로 받는 생성자    
+@NoArgsConstructor          // 기본 생성자  
 public class CustomUserDetails implements UserDetails {
 
     private String username;
     private String password;
     private String role;
-    
-    // 🌟 [핵심 추가] MemberDTO를 받아서 내 필드에 채워넣는 생성자
+
+    // 🌟 [필수 추가] DB 데이터(MemberDTO)를 이 객체로 변환하는 생성자
+    // 이 부분이 없으면 로그인할 때 "MemberDTO를 CustomUserDetails로 못 바꿉니다" 에러가 납니다.
     public CustomUserDetails(MemberDTO member) {
         this.username = member.getUsername();
-        
-        // 🚨 여기가 제일 중요합니다! 
-        // DTO의 'mb_password'를 Security의 'password'로 매핑
-        this.password = member.getMb_password(); 
-        
+        this.password = member.getMb_password(); // DB의 mb_password를 시큐리티 password로 연결
         this.role = member.getRole();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // role이 null일 경우 방어 로직 추가
-        if (role == null) return Collections.emptyList();
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
+        // 첫번째 코드의 간결한 스타일 유지 (람다식 활용)
+        // role이 null일 경우를 대비해 빈 리스트 반환 처리만 살짝 추가하면 더 안전합니다.
+        if (role == null) return List.of();
+        return List.of(() -> role); 
     }
 
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    // 계정 상태 체크 (무조건 true 반환)
     @Override
     public boolean isAccountNonExpired() { return true; }
 

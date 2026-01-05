@@ -37,28 +37,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        // TODO: 배포 전 제거 (디버그 로그)
-        System.out.println("============== [1] loadUserByUsername 진입 ==============");
-        System.out.println("입력된 username: " + username);
-
         // username 기준으로 DB에서 회원 정보 조회
         MemberDTO member = memberMapper.getMemberByUsername(username);
 
         // 조회 결과 검증
         if (member == null) {
-            // TODO: 배포 전 제거 (디버그 로그)
-            System.out.println("DB 조회 결과: 회원 없음");
-            throw new UsernameNotFoundException(
-                    "해당 사용자를 찾을 수 없습니다: " + username
-            );
+            throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다: " + username);
         }
-
-        // TODO: 배포 전 제거 (디버그 로그)
-        System.out.println("DB 조회 성공");
-        System.out.println(" - username: " + member.getUsername());
-        System.out.println(" - encoded password: " + member.getMb_password());
-        System.out.println(" - role: " + member.getRole());
-        System.out.println("============== [2] loadUserByUsername 종료 ==============");
 
         // Spring Security에서 사용하는 UserDetails 객체로 변환
         return new CustomUserDetails(

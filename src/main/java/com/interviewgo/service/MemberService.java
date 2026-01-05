@@ -1,63 +1,65 @@
 package com.interviewgo.service;
 
+import java.util.Random;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.mapper.MemberMapper;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * MemberService
- * ----------------------------------------------------
- * 회원 관련 비즈니스 로직 담당
- * - 회원가입 처리
- * - 로그인/마이페이지용 회원 조회
- * - 비밀번호 암호화 처리
- */
-@Service 
+@Service
 @RequiredArgsConstructor
 public class MemberService {
     
-    // 회원 관련 DB 접근 Mapper
     private final MemberMapper mapper;
-    
-    // 비밀번호 암호화를 위한 Encoder (Spring Security 제공)
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 회원가입 처리
-     * 1. 사용자가 입력한 비밀번호를 암호화
-     * 2. 기본 권한(USER) 설정
-     * 3. DB에 회원 정보 저장
-     */
+    // [조원 기능] 아이디 중복 검사
+    public boolean isUsernameAvailable(String username) {
+        return mapper.countByUsername(username) == 0;
+    }
+
+    // [내 기능] 회원가입
     public int insertMember(MemberDTO user) {
-        // 평문 비밀번호 → BCrypt 해시값으로 변환
         user.setMb_password(passwordEncoder.encode(user.getMb_password()));
-        
-        // 신규 가입자는 기본 권한 USER로 설정
         user.setRole("USER");
-        
-        // 회원 정보 DB 저장
         return mapper.insertMember(user);
     }
 
-    /**
-     * 로그인용 회원 조회
-     * - username(ID)을 기준으로 회원 정보 조회
-     * - Spring Security 인증 및 JWT 발급 단계에서 사용
-     */
+    // [내 기능] 로그인용 조회
     public MemberDTO getMemberByUsername(String username) {
         return mapper.getMemberByUsername(username);
     }
     
-    /**
-     * UID 기준 회원 조회
-     * - 마이페이지, 프로필 조회 등에서 사용
-     * - PK 기반 조회이므로 가장 안전하고 정확한 방식
-     */
+    // [내 기능] UID용 조회
     public MemberDTO getMemberByUid(Long mbUid) {
         return mapper.getMemberByUid(mbUid);
+    }
+
+    // 🚨 [에러 해결 부분] 임시 비밀번호 발급 메서드 추가
+    @Transactional
+    public String createTempPassword(MemberDTO member) {
+        // 1. 회원 정보 확인
+        int count = mapper.checkUserExists(member);
+        if (count == 0) {
+            throw new IllegalArgumentException("일치하는 회원 정보를 찾을 수 없습니다.");
+        }
+
+        // 2. 임시 비번 생성 및 암호화
+        String tempPw = String.format("%04d", new Random().nextInt(10000));
+        String encodedPw = passwordEncoder.encode(tempPw);
+
+        // 3. DB 업데이트
+        MemberDTO updateDto = new MemberDTO();
+        updateDto.setUsername(member.getUsername());
+        updateDto.setMb_password(encodedPw);
+        
+        mapper.updatePassword(updateDto);
+
+        return tempPw;
     }
 }

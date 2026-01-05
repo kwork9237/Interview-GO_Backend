@@ -1,26 +1,29 @@
 package com.interviewgo.controller;
 
+import com.interviewgo.dto.ExamDto;
+import com.interviewgo.mapper.ExamMapper;
 import com.interviewgo.mapper.ExamModel;
 import com.interviewgo.service.ExamService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/exams")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ExamController {
 
+	private final ExamMapper ExamDao;
     private final ExamService examService;
 
-    public ExamController(ExamService examService) {
-        this.examService = examService;
-    }
-
-    @GetMapping
-    public List<ExamModel> getAllExams() {
-        return examService.getAllExams();
-    }
+//    @GetMapping
+//    public List<ExamModel> getAllExams() {
+//        return examService.getAllExams();
+//    }
 
     @GetMapping("/language/{langId}")
     public List<ExamModel> getExamsByLanguage(@PathVariable int langId) {
@@ -29,8 +32,8 @@ public class ExamController {
 
     // 상세 조회
     @GetMapping("/{id}")
-    public ExamModel getExam(@PathVariable("id") int id) {
-        return examService.getExamDetail(id); // 조회만
+    public ExamDto getExam(@PathVariable("id") int id) {
+        return ExamDao.getExamDetail(id); // 조회만
     }
 
     // 조회수 증가 (POST)

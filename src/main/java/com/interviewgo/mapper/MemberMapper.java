@@ -17,4 +17,5 @@ public interface MemberMapper {
 	
 	// 사용자 제거
 	int deleteMember(String memberUid);
+	
 }

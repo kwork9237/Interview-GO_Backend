@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interviewgo.dao.interview.InterviewDAO;
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.interview.InterviewSessionDTO;
 import com.interviewgo.dto.interview.InterviewSetupDTO;
-import com.interviewgo.mapper.interview.InterviewHistoryMapper;
-import com.interviewgo.mapper.interview.InterviewSessionMapper;
 import com.interviewgo.service.jwt.CustomUserDetails;
 import com.interviewgo.utils.UUIDUtils;
 
@@ -28,8 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/interview")
 public class InterviewController {
-	private final InterviewHistoryMapper HistoryDAO;
-	private final InterviewSessionMapper SessionDAO;
+	private final InterviewDAO dao;
 	
 	// 면접 시작시 호출 (ssid 생성)
 	@PostMapping("/setup")
@@ -43,7 +42,7 @@ public class InterviewController {
         InterviewSessionDTO sessionData = new InterviewSessionDTO();
         sessionData.setIv_ssid(sessionId);
         sessionData.setMb_uid(requestData.getMb_uid());
-        SessionDAO.insertInterviewSession(sessionData);
+        dao.insertInterviewSession(sessionData);
         
         // API SERVER 로그
         System.out.println("[InterviewController] Setup Processing End");
@@ -79,7 +78,7 @@ public class InterviewController {
         String firstMsg = "안녕하세요. 자기소개 부탁드립니다.";
 
         // 마지막 대화 기록 불러오기
-        InterviewHistoryDTO dto = HistoryDAO.getLastInterviewHistoryBySsid(ssid);
+        InterviewHistoryDTO dto = dao.getLastInterviewHistoryBySsid(ssid);
         
         // 대화 기록이 없으면 기본 대화기록 삽입.
         if(dto == null) {
@@ -95,7 +94,7 @@ public class InterviewController {
             dto.setIv_feedback("");
 
             try {
-            	HistoryDAO.insertInterviewHistory(dto);
+            	dao.insertInterviewHistory(dto);
             }
             catch(Exception e) {
             	System.out.println("DB에 중복되는 ssid 및 step를 insert 시도함");
@@ -128,8 +127,26 @@ public class InterviewController {
 		}
 		
 		// 대회내역 불러오기
-		List<InterviewHistoryDTO> hist = HistoryDAO.getAllInterviewHistoryBySsid(ssid);
+		List<InterviewHistoryDTO> hist = dao.getAllInterviewHistoryBySsid(ssid);
 		
 		return ResponseEntity.ok(Map.of("data", hist));
+	}
+	
+	
+	// 면접 포기 등
+	@DeleteMapping("/dropout")
+	public ResponseEntity<?> dropOutInterview(@RequestParam(value="sid") String ssid) {
+		if(!UUIDUtils.isValid(ssid) && !ssid.equals("test")) {
+			System.out.println("[InterviewController] Invalid History SSID Error");
+			System.out.println("ssid >> " + ssid);
+
+			return new ResponseEntity<>(
+					Map.of("message", "유효하지 않은 세션입니다."),
+					HttpStatus.BAD_REQUEST);
+		}
+		
+		dao.dropOutInterviewSession(ssid);
+		
+		return ResponseEntity.ok(Map.of("res", "ok"));
 	}
 }

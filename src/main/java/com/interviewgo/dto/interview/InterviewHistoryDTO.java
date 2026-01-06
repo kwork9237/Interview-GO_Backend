@@ -1,6 +1,6 @@
 package com.interviewgo.dto.interview;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import org.apache.ibatis.type.Alias;
 
@@ -19,5 +19,5 @@ public class InterviewHistoryDTO {
 	private double iv_score;
 	private String iv_feedback;
 	private String iv_memo;		// 삭제 가능
-	private Date iv_date;
+	private Timestamp iv_date;
 }

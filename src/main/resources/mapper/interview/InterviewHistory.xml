@@ -47,6 +47,6 @@
 	
 	<!-- ssid 기반 면접기록 삭제 -->
 	<delete id="deleteInterviewHistoryBySsid" parameterType="String">
-		DELETE interview_history WHERE iv_ssid = #{iv_ssid}
+		DELETE FROM interview_history WHERE iv_ssid = #{iv_ssid}
 	</delete>
 </mapper>

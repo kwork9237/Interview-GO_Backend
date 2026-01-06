@@ -68,4 +68,24 @@ public class AIController {
 	    // 결과 반환 + 파이선 서버 호출
 	    return Map.of("data", localAi.requestGemma(query, ssid)); 
 	}
+	
+	// 디버그 전용 (재사용 가능성 있으므로 주석 처리)
+//	@GetMapping("/debug")
+//	public Map<String, Object> debug(
+//			@RequestParam(value="q")String query, 
+//			@RequestParam(value="sid")String ssid
+//			) {
+//
+//		Map<String, Object> rs = new HashMap<>();
+//		rs.put("answer", "DEBUG ANSWER");
+//		rs.put("score", 10);
+//		rs.put("feedback", "DEBUG FEEBACK");
+//		rs.put("isLast", true);
+//		
+//		Map<String, Object> response = new HashMap<>();
+//		response.put("data", rs);
+//		
+//		
+//		return response;
+//	}
 }

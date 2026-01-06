@@ -20,6 +20,6 @@
 	
 	<!-- 인터뷰 세션 제거 -->
 	<delete id="deleteInterviewSession" parameterType="String">
-		DELETE interview_session WHERE iv_ssid = #{iv_ssid}
+		DELETE FROM interview_session WHERE iv_ssid = #{iv_ssid}
 	</delete>
 </mapper>

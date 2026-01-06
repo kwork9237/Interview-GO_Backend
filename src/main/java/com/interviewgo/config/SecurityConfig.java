@@ -69,6 +69,9 @@ public class SecurityConfig {
                 // 유튜브, 취업 허용
                 .requestMatchers("/api/work24/list", "/api/wordcloud/list", "/api/youtube/check").permitAll()
                 
+                // 시험 관련 허용
+                .requestMatchers("/api/exams/**").permitAll()
+                
                 // AI, 면접 관련 허용
                 .requestMatchers("/api/ai/**", "/api/interview/**").permitAll()
                 

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.dto.FindPwResponse;
 import com.interviewgo.dto.MemberDTO;
-import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,10 +32,13 @@ public class MemberController {
     // =============================================================
     // 1. 아이디 중복 확인 (조원 코드에서 가져옴)
     // =============================================================
+
+    // username 중복검사
     @GetMapping("/check-id")
     public ResponseEntity<Boolean> checkIdDuplicate(@RequestParam("username") String username) {
         boolean isAvailable = memberService.isUsernameAvailable(username);
         return ResponseEntity.ok(isAvailable);
+
     }
 
     // =============================================================
@@ -61,14 +64,17 @@ public class MemberController {
     // 3. 로그인 (내 코드 유지 - mb_icon 및 유저 정보 포함 필수!)
     // =============================================================
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody MemberDTO user) {
-        System.out.println("로그인 요청: " + user.getUsername());
-        
-        try {
-            // 1️⃣ 인증 수행
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getMb_password())
-            );
+    public ResponseEntity<?> login(@RequestBody MemberDTO user) {
+    	System.out.println("login 컨트롤로 진입");
+
+    	System.out.println("UNAME " + user.getUsername());
+    	System.out.println("UPASSWORD " + user.getMb_password());
+    	
+    	try {
+        // 인증 시도
+    		Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getMb_password()));
+
 
             // 2️⃣ JWT 토큰 생성
             String token = jwtTokenProvider.createToken(authentication.getName(), "USER");
@@ -101,21 +107,24 @@ public class MemberController {
             return ResponseEntity.status(500).body("서버 에러: " + e.getMessage());
         }
     }
-
+    
     // =============================================================
     // 4. 비밀번호 찾기 (조원 코드에서 가져옴)
     // =============================================================
+	
+    // 비번 찾기
     @PostMapping("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody MemberDTO request) {
         try {
-            // 임시 비밀번호 생성 서비스 호출
+            // 서비스 호출
             String tempPw = memberService.createTempPassword(request);
             
-            // 성공 응답
+            // 성공 시: { "tempPassword": "0000", "message": "..." } 반환
             return ResponseEntity.ok(new FindPwResponse(tempPw, "임시 비밀번호 발급 성공"));
 
         } catch (IllegalArgumentException e) {
-            // 일치하는 회원 없음
+            // 유저 없음 에러 (400 Bad Request)
+
             return ResponseEntity.badRequest().body(new FindPwResponse(null, e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();

@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.interview.InterviewSessionDTO;
+import com.interviewgo.dto.interview.InterviewSetupDTO;
 import com.interviewgo.mapper.interview.InterviewHistoryMapper;
 import com.interviewgo.mapper.interview.InterviewSessionMapper;
 import com.interviewgo.service.jwt.CustomUserDetails;
@@ -31,9 +33,7 @@ public class InterviewController {
 	
 	// 면접 시작시 호출 (ssid 생성)
 	@PostMapping("/setup")
-	public ResponseEntity<?> setupInterview(
-        @AuthenticationPrincipal CustomUserDetails userDetails // JWT에서 추출한 유저 정보
-    ) {
+	public ResponseEntity<?> setupInterview(@RequestBody InterviewSetupDTO requestData) {
         // UUID 생성
         String sessionId = UUIDUtils.GenerateUUID();
 
@@ -42,9 +42,7 @@ public class InterviewController {
         // 만약 비회원일 경우 session data를 정기적으로 제거할 것인지 확인 필요
         InterviewSessionDTO sessionData = new InterviewSessionDTO();
         sessionData.setIv_ssid(sessionId);
-        
-        // 2026 01 06 mb uid 수정 필요
-        sessionData.setMb_uid(null);
+        sessionData.setMb_uid(requestData.getMb_uid());
         SessionDAO.insertInterviewSession(sessionData);
         
         // API SERVER 로그
@@ -57,13 +55,17 @@ public class InterviewController {
 	
 	// 면접 시작시 호출
 	@PostMapping("/start")
-	public ResponseEntity<?> startInterview(@RequestParam(value="sid") String ssid) {
+	public ResponseEntity<?> startInterview(
+			@RequestParam(value="sid") String ssid,
+			@RequestParam(value="uid") Long mbUid
+	) {
 		Map<String, Object> response = new HashMap<>();
 		
 		// 검증
 		if (!UUIDUtils.isValid(ssid) && !ssid.equals("test")) {
 			// API SERVER 로그
 	        System.out.println("[InterviewController] Invalid Start SSID Error");
+	        System.out.println("ssid >> " + ssid);
 	        
 	        response.put("message", "유효하지 않은 세션입니다.");
 			
@@ -86,7 +88,7 @@ public class InterviewController {
             dto.setIv_ssid(ssid);
             
             // 26 01 06 mb uid 관련 수정 필요
-            dto.setMb_uid(null);
+            dto.setMb_uid(mbUid);
             dto.setIv_step((short) 1);
             dto.setIv_context(firstMsg);
             dto.setIv_score(0);
@@ -118,6 +120,7 @@ public class InterviewController {
 		// test는 디버그 용도임
 		if(!UUIDUtils.isValid(ssid) && !ssid.equals("test")) {
 			System.out.println("[InterviewController] Invalid History SSID Error");
+			System.out.println("ssid >> " + ssid);
 
 			return new ResponseEntity<>(
 					Map.of("message", "유효하지 않은 세션입니다."),

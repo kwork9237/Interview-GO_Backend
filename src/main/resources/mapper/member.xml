@@ -4,131 +4,142 @@
 
 <mapper namespace="com.interviewgo.mapper.MemberMapper">
 
-    <select id="getMemberByUsername" resultType="member">
-        SELECT *
-        FROM member
-        WHERE username = #{username}
-    </select>
+	<select id="getMemberByUsername" resultType="member">
+		SELECT *
+		FROM member
+		WHERE username = #{username}
+	</select>
 
-    <select id="countByUsername" parameterType="String" resultType="int">
-        SELECT COUNT(*) 
-        FROM member 
-        WHERE username = #{username}
-    </select>
+	<select id="countByUsername" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE username = #{username}
+	</select>
 
-    <select id="checkUserExists" parameterType="member" resultType="int">
-        SELECT COUNT(*)
-        FROM member
-        WHERE username = #{username}
-          AND mb_pnumber = #{mb_pnumber}
-    </select>
-
-
-    <insert id="insertMember" parameterType="member">
-        INSERT INTO member (
-            username, 
-            mb_password, 
-            mb_nickname, 
-            mb_pnumber, 
-            role, 
-            mb_date,
-            mb_icon
-        ) VALUES (
-            #{username}, 
-            #{mb_password}, 
-            #{mb_nickname}, 
-            #{mb_pnumber}, 
-            #{role}, 
-            NOW(),
-            '/images/default.png'
-        )
-    </insert>
-
-    <update id="updatePassword" parameterType="member">
-        UPDATE member
-        SET mb_password = #{mb_password}
-        WHERE username = #{username}
-    </update>
-
-    <update id="updateMember" parameterType="member">
-        UPDATE member
-        <set>
-            <if test="mb_password != null and mb_password != ''">
-                mb_password = #{mb_password},
-            </if>
-            <if test="mb_nickname != null and mb_nickname != ''">
-                mb_nickname = #{mb_nickname},
-            </if>
-            <if test="mb_pnumber != null and mb_pnumber != ''">
-                mb_pnumber = #{mb_pnumber},
-            </if>
-            <if test="mb_icon != null and mb_icon != ''">
-                mb_icon = #{mb_icon},
-            </if>
-        </set>
-        WHERE mb_uid = #{mb_uid}
-    </update>
+	<select id="checkUserExists" parameterType="member"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE username = #{username}
+		AND
+		mb_pnumber = #{mb_pnumber}
+	</select>
 
 
-    <select id="getMemberByUid" resultType="member">
-        SELECT *
-        FROM member
-        WHERE mb_uid = #{mbUid}
-    </select>
+	<insert id="insertMember" parameterType="member">
+		INSERT INTO member (
+		username,
+		mb_password,
+		mb_nickname,
+		mb_pnumber,
+		role,
+		mb_date,
+		mb_icon
+		)
+		VALUES (
+		#{username},
+		#{mb_password},
+		#{mb_nickname},
+		#{mb_pnumber},
+		#{role},
+		NOW(),
+		'/images/default.png'
+		)
+	</insert>
 
-    <select id="selectPassword" parameterType="Long" resultType="string">
-        SELECT mb_password
-        FROM member
-        WHERE mb_uid = #{mb_uid}
-    </select>
-    
-    <update id="updatePasswordByUid">
-        UPDATE member
-        SET mb_password = #{mb_password}
-        WHERE mb_uid = #{mb_uid}
-    </update>
+	<update id="updatePassword" parameterType="member">
+		UPDATE member
+		SET
+		mb_password = #{mb_password}
+		WHERE username = #{username}
+	</update>
 
-    <select id="checkNicknameDuplicate" resultType="int">
-        SELECT COUNT(*)
-        FROM member
-        WHERE mb_nickname = #{nickname}
-          AND mb_uid != #{mb_uid}
-    </select>
-
-
-    <select id="selectExamHistory" parameterType="Long" resultType="interviewHistory">
-        SELECT
-            h.hist_uid,
-            h.hist_score,
-            h.hist_date,
-            e.ex_title,
-            e.ex_level,
-            l.ex_lang_name
-        FROM exam_history h
-        INNER JOIN exam e ON h.ex_uid = e.ex_uid AND h.ex_lang_uid = e.ex_lang_uid
-        INNER JOIN exam_language l ON h.ex_lang_uid = l.ex_lang_uid
-        WHERE h.mb_uid = #{mb_uid}
-        ORDER BY h.hist_date DESC
-    </select>
-
-    <select id="selectInterviewHistory" parameterType="Long" resultType="interviewHistory">
-        SELECT *
-        FROM interview_history
-        WHERE mb_uid = #{mb_uid}
-        ORDER BY iv_date DESC
-    </select>
+	<update id="updateMember" parameterType="member">
+		UPDATE member
+		<set>
+			<if test="mb_password != null and mb_password != ''">
+				mb_password = #{mb_password},
+			</if>
+			<if test="mb_nickname != null and mb_nickname != ''">
+				mb_nickname = #{mb_nickname},
+			</if>
+			<if test="mb_pnumber != null and mb_pnumber != ''">
+				mb_pnumber = #{mb_pnumber},
+			</if>
+			<if test="mb_icon != null and mb_icon != ''">
+				mb_icon = #{mb_icon},
+			</if>
+		</set>
+		WHERE mb_uid = #{mb_uid}
+	</update>
 
 
-    <delete id="deleteExamHistory" parameterType="Long">
-        DELETE FROM exam_history WHERE mb_uid = #{mb_uid}
-    </delete>
+	<select id="getMemberByUid" resultType="member">
+		SELECT *
+		FROM member
+		WHERE
+		mb_uid = #{mbUid}
+	</select>
 
-    <delete id="deleteInterviewHistory" parameterType="Long">
-        DELETE FROM interview_history WHERE mb_uid = #{mb_uid}
-    </delete>
+	<select id="selectPassword" parameterType="Long"
+		resultType="string">
+		SELECT mb_password
+		FROM member
+		WHERE mb_uid = #{mb_uid}
+	</select>
 
-    <delete id="deleteMember" parameterType="Long">
-        DELETE FROM member WHERE mb_uid = #{mb_uid}
-    </delete>
+	<update id="updatePasswordByUid">
+		UPDATE member
+		SET mb_password = #{mb_password}
+		WHERE
+		mb_uid = #{mb_uid}
+	</update>
+
+	<select id="checkNicknameDuplicate" resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE mb_nickname = #{nickname}
+		AND mb_uid != #{mb_uid}
+	</select>
+
+	<select id="selectExamHistory" parameterType="Long"
+		resultType="examHistory">
+		SELECT
+		h.hist_uid,
+		h.hist_score,
+		h.hist_date,
+		e.ex_title,
+		e.ex_level,
+		l.ex_lang_name
+		FROM exam_history h
+		INNER JOIN exam e ON h.ex_uid = e.ex_uid AND h.ex_lang_uid = e.ex_lang_uid
+		INNER JOIN exam_language l ON h.ex_lang_uid = l.ex_lang_uid
+		WHERE h.mb_uid = #{mb_uid}
+		ORDER BY h.hist_date DESC
+	</select>
+
+	<select id="selectInterviewHistory" parameterType="Long"
+		resultType="interviewHistory">
+		SELECT *
+		FROM interview_history
+		WHERE mb_uid = #{mb_uid}
+		ORDER BY iv_date DESC, iv_uid ASC
+	</select>
+
+	<delete id="deleteExamHistory" parameterType="Long">
+		DELETE FROM
+		exam_history WHERE mb_uid = #{mb_uid}
+	</delete>
+
+	<delete id="deleteInterviewHistory" parameterType="Long">
+		DELETE FROM
+		interview_history WHERE mb_uid = #{mb_uid}
+	</delete>
+
+	<delete id="deleteMember" parameterType="Long">
+		DELETE FROM member WHERE
+		mb_uid = #{mb_uid}
+	</delete>
 
 </mapper>

@@ -4,7 +4,7 @@
 
 <mapper namespace="com.interviewgo.mapper.MemberMapper">
 
-    <select id="getMemberByUsername" resultType="com.interviewgo.dto.MemberDTO">
+    <select id="getMemberByUsername" resultType="member">
         SELECT *
         FROM member
         WHERE username = #{username}
@@ -16,7 +16,7 @@
         WHERE username = #{username}
     </select>
 
-    <select id="checkUserExists" parameterType="com.interviewgo.dto.MemberDTO" resultType="int">
+    <select id="checkUserExists" parameterType="member" resultType="int">
         SELECT COUNT(*)
         FROM member
         WHERE username = #{username}
@@ -24,7 +24,7 @@
     </select>
 
 
-    <insert id="insertMember" parameterType="com.interviewgo.dto.MemberDTO">
+    <insert id="insertMember" parameterType="member">
         INSERT INTO member (
             username, 
             mb_password, 
@@ -45,13 +45,13 @@
     </insert>
 
 
-    <update id="updatePassword" parameterType="com.interviewgo.dto.MemberDTO">
+    <update id="updatePassword" parameterType="member">
         UPDATE member
         SET mb_password = #{mb_password}
         WHERE username = #{username}
     </update>
 
-    <update id="updateMember" parameterType="com.interviewgo.dto.MemberDTO">
+    <update id="updateMember" parameterType="member">
         UPDATE member
         <set>
             <if test="mb_password != null and mb_password != ''">
@@ -71,7 +71,7 @@
     </update>
 
 
-    <select id="getMemberByUid" resultType="com.interviewgo.dto.MemberDTO">
+    <select id="getMemberByUid" resultType="member">
         SELECT *
         FROM member
         WHERE mb_uid = #{mbUid}
@@ -91,7 +91,7 @@
     </select>
 
 
-    <select id="selectExamHistory" parameterType="Long" resultType="com.interviewgo.dto.ExamHistoryDTO">
+    <select id="selectExamHistory" parameterType="Long" resultType="interviewHistory">
         SELECT
             h.hist_uid,
             h.hist_score,
@@ -106,7 +106,7 @@
         ORDER BY h.hist_date DESC
     </select>
 
-    <select id="selectInterviewHistory" parameterType="Long" resultType="com.interviewgo.dto.InterviewHistoryDTO">
+    <select id="selectInterviewHistory" parameterType="Long" resultType="interviewHistory">
         SELECT *
         FROM interview_history
         WHERE mb_uid = #{mb_uid}

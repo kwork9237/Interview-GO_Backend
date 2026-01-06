@@ -41,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class MyPageController { 
     
     // 마이페이지 관련 로직 전담 서비스

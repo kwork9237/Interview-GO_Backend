@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.interviewgo.dto.ExamHistoryDTO;
-import com.interviewgo.dto.InterviewHistoryDTO;
+import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
 
 /**

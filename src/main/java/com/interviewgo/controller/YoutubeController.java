@@ -15,7 +15,7 @@ import com.interviewgo.service.YoutubeService;
  * 유튜브 API를 통해 영상 데이터를 수집하고, 수집한 영상ID를 프론트에 제공 하는 컨트롤러.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/youtube")
 public class YoutubeController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class YoutubeController {
      * 기능: YouTube Data API를 호출하여 설정된 키워드별 영상을 DB에 저장합니다.
      * 결과: 총 18개(면접 꿀팁, 자기소개서, 코딩테스트 각 6개씩)의 최신 영상을 동기화합니다.
      */
-    @GetMapping("/admin/youtube/save")
+    @GetMapping("/admin/save")
     public String saveVideos() {
         try {
         	// YoutubeService의 수집 로직 
@@ -43,7 +43,7 @@ public class YoutubeController {
      * @return DB에서 해당 카테고리에 매칭되는 영상 리스트 반환
      * * 사용 예시: /api/youtube/check?category=자기소개서
      */
-    @GetMapping("/youtube/check")
+    @GetMapping("/check")
     public List<YoutubeDTO> check(@RequestParam(value = "category", required = false) String category) {
     	// 클라이언트에서 카테고리 파라미터를 보내지 않았을 경우 '면접 꿀팁'을 기본 데이터로 설정
         if (category == null || category.isEmpty()) {

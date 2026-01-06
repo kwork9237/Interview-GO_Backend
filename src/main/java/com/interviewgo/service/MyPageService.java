@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interviewgo.dto.ExamHistoryDTO;
-import com.interviewgo.dto.InterviewHistoryDTO;
+import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.mapper.MemberMapper;
 

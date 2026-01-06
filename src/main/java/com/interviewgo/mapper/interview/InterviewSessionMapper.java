@@ -1,18 +1,17 @@
 package com.interviewgo.mapper.interview;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import com.interviewgo.dto.interview.InterviewConfigDTO;
-import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.interview.InterviewSessionDTO;
 
 @Mapper
 public interface InterviewSessionMapper {
-	// 인터뷰 설정 관련 DB 매퍼
+	// 세션 삽입
 	int insertInterviewSession(InterviewSessionDTO interviewSession);
-	InterviewConfigDTO selectInterviewSession(@Param("iv_ssid")String uuid);
+	
+	// 채팅 세션 선택 (현재 사용하지 않음)
+	InterviewSessionDTO getInterviewSessionCount(@Param("iv_ssid")String uuid);
+	
+	// 단일 세션 삭제 (현재 사용하지 않음)
 	int deleteInterviewSession(@Param("iv_ssid")String uuid);
 }

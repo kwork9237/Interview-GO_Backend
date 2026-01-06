@@ -66,6 +66,12 @@ public class SecurityConfig {
                 // 로그인, 회원가입 등 허용
                 .requestMatchers("/join", "/login", "/find-password", "/check-id", "/").permitAll()
                 
+                // 유튜브, 취업 허용
+                .requestMatchers("/api/work24/list", "/api/wordcloud/list", "/api/youtube/check").permitAll()
+                
+                // AI, 면접 관련 허용
+                .requestMatchers("/api/ai/**", "/api/interview/**").permitAll()
+                
                 // 🚨 [추가된 부분] 아이콘 목록 조회는 로그인 없이도(또는 토큰 에러나도) 볼 수 있게 허용!
                 .requestMatchers("/api/mypage/default-icons").permitAll()
                 

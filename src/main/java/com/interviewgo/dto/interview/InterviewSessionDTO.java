@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Alias("interviewSession")
 public class InterviewSessionDTO {
-	// 인터뷰 설정 관련 DTO
+	// 인터뷰 세션 관련 DTO
 	
 	private String iv_ssid;
 	private Long mb_uid;

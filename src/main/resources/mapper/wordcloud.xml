@@ -4,6 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.interviewgo.mapper.WordCloudMapper">
+	<!-- 2026 01 07 -->
+	<!-- Youtube.xml 와의 차이? -->
+	<!-- DELETE와 TRUNCATE 쓴 이유? -->
 	<delete id="deleteAllWords">
         DELETE FROM word_cloud
     </delete>

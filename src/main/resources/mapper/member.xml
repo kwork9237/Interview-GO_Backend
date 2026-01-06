@@ -9,13 +9,11 @@
         WHERE username = #{username}
     </select>
 
-	<!-- username 중복검사 -->
 	<select id="countByUsername" parameterType="String" resultType="int">
         SELECT COUNT(*) 
         FROM member 
         WHERE username = #{username}
     </select>
-
 
     <select id="checkUserExists" parameterType="member" resultType="int">
         SELECT COUNT(*)
@@ -23,7 +21,6 @@
         WHERE username = #{username}
           AND mb_pnumber = #{mb_pnumber}
     </select>
-
 
     <insert id="insertMember" parameterType="member">
         INSERT INTO member (
@@ -90,7 +87,7 @@
           AND mb_uid != #{mb_uid}
     </select>
 
-
+	<!-- Exam.xml 이동 -->
     <select id="selectExamHistory" parameterType="Long" resultType="interviewHistory">
         SELECT
             h.hist_uid,
@@ -106,6 +103,7 @@
         ORDER BY h.hist_date DESC
     </select>
 
+	<!-- InterviewHistory 이동 -->
     <select id="selectInterviewHistory" parameterType="Long" resultType="interviewHistory">
         SELECT *
         FROM interview_history
@@ -113,11 +111,12 @@
         ORDER BY iv_date DESC
     </select>
 
-
+	<!-- exam xml로 -->
     <delete id="deleteExamHistory" parameterType="Long">
         DELETE FROM exam_history WHERE mb_uid = #{mb_uid}
     </delete>
 
+	<!-- InterviewHistory xml로 -->
     <delete id="deleteInterviewHistory" parameterType="Long">
         DELETE FROM interview_history WHERE mb_uid = #{mb_uid}
     </delete>

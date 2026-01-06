@@ -47,6 +47,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Spring Security에서 사용하는 UserDetails 객체로 변환
         return new CustomUserDetails(
+        		// 멤버 UID 추가
+        		member.getMb_uid(),
                 member.getUsername(),
                 member.getMb_password(), // 암호화된 비밀번호
                 member.getRole()

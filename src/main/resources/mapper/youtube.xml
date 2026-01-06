@@ -12,6 +12,8 @@
         ON DUPLICATE KEY UPDATE yt_category = #{ytCategory}
     </insert>
 
+	<!-- Merge 시 Member로 이동 필요 -->
+	<!-- member.xml 에서 getMemberByUid 존재함. -->
 	<select id="getMember" parameterType="Long">
 		SELECT * FROM member WHERE mb_uid = #{mb_uid}
 	</select>

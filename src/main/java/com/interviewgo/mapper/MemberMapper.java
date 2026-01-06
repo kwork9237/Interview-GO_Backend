@@ -126,10 +126,6 @@ public interface MemberMapper {
      * 2단계: 회원 정보 삭제
      */
     int deleteMember(Long mb_uid);
-
-	
-	// 사용자 가져오기
-	MemberDTO getMember(String memberUid);
 	
 	// 유저네임 기반 멤버 가져오기
 	MemberDTO getMemberById(String username);

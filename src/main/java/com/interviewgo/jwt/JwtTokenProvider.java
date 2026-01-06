@@ -27,9 +27,10 @@ public class JwtTokenProvider {
     // 2. role 같은 추가 클레임을 집어넣음
     // 3. 현재 시간으로 발급시간 설정, 만료시간 계산
     // 4. HMAC-SHA256 알고리즘으로 비밀키를 이용해 서명 후 compact()함수로 문자열(token) 반환
-    public String createToken(String username, String role) {
+    public String createToken(String username, String role, Long mbUid) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
+        claims.put("mb_uid", mbUid);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -42,19 +43,28 @@ public class JwtTokenProvider {
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
-
-    // 토큰에서 사용자명 추출
-    // 1. 토큰을 파싱(parseClaimsJws)하여 검증 후 claim body에서 사용자명(subject)을 반환
+    
+    // 공통 파싱 메서드
+    // 1. 토큰을 파싱(parseClaimsJws)하여 검증 후 claim body 반환
     // 2. 토큰이 유효하지 않으면 예외가 발생할 수 있음
-    public String getUsername(String token) {
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();                        // 사용자명(subject) 반환
+                .getBody();
     }
 
+    // 공용 파싱 메서드에 토큰을 입력하여 사용자명 추출
+    public String getUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+    
+    // 사용자 UID 추출
+    public Long getMemberUid(String token) {
+    	return getClaims(token).get("mb_uid", Long.class);
+    }
+    
     // 토큰 유효성 검사
     // 1. parser로 토큰을 파싱하여 서명 검증/만료 검사 수행
     // 2. 예외 발생시 false 반환

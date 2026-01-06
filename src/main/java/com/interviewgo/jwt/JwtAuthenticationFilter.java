@@ -64,17 +64,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     
     // 필터링 제외
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getServletPath();
-        
-        // 패턴을 리스트로 관리하면 편리합니다.
-        List<String> skipPaths = List.of(
-            "/api/ai/**",
-            "/api/interview/**"
-        );
-
-        return skipPaths.stream()
-                .anyMatch(p -> pathMatcher.match(p, path));
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        String path = request.getServletPath();
+//        
+//        // 패턴을 리스트로 관리하면 편리합니다.
+//        List<String> skipPaths = List.of(
+//            "/api/ai/**",
+//            "/api/interview/**"
+//        );
+//
+//        return skipPaths.stream()
+//                .anyMatch(p -> pathMatcher.match(p, path));
+//    }
 }

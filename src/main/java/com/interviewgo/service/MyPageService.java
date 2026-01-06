@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interviewgo.dto.ExamHistoryDTO;
-import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
+import com.interviewgo.dto.PasswordUpdateDTO;
+import com.interviewgo.dto.interview.InterviewHistoryDTO;
 import com.interviewgo.mapper.MemberMapper;
 
 import lombok.Getter;
@@ -46,9 +47,8 @@ public class MyPageService {
         return memberMapper.updateMember(member) > 0;
     }
 
-    // 🚨 [에러 해결 부분] 닉네임 중복 확인 메서드 추가
+    // 닉네임 중복 확인
     public boolean isNicknameAvailable(String nickname, Long mbUid) {
-        // 중복된 개수가 0이면 사용 가능(true), 아니면 불가능(false)
         return memberMapper.checkNicknameDuplicate(nickname, mbUid) == 0;
     }
 
@@ -87,5 +87,26 @@ public class MyPageService {
             resultList.add(group);
         }
         return resultList;
+    }
+    
+    // [추가됨] 비밀번호 변경 로직
+    @Transactional
+    public void updatePassword(PasswordUpdateDTO dto) {
+        String dbPassword = memberMapper.selectPassword(dto.getMb_uid());
+        
+        if (dbPassword == null) {
+            throw new RuntimeException("사용자 정보를 찾을 수 없습니다.");
+        }
+
+        // 1. 현재 비밀번호 검증 (입력한 비번 vs DB 암호화된 비번)
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), dbPassword)) {
+            throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 새 비밀번호 암호화
+        String encodedNewPassword = passwordEncoder.encode(dto.getNewPassword());
+
+        // 3. DB 업데이트
+        memberMapper.updatePasswordByUid(dto.getMb_uid(), encodedNewPassword);
     }
 }

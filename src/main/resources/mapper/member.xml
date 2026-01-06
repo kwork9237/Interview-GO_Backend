@@ -44,7 +44,6 @@
         )
     </insert>
 
-
     <update id="updatePassword" parameterType="member">
         UPDATE member
         SET mb_password = #{mb_password}
@@ -82,6 +81,12 @@
         FROM member
         WHERE mb_uid = #{mb_uid}
     </select>
+    
+    <update id="updatePasswordByUid">
+        UPDATE member
+        SET mb_password = #{mb_password}
+        WHERE mb_uid = #{mb_uid}
+    </update>
 
     <select id="checkNicknameDuplicate" resultType="int">
         SELECT COUNT(*)

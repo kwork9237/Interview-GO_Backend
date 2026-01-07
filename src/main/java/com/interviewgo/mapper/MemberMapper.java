@@ -23,23 +23,10 @@ public interface MemberMapper {
     // 1. 로그인 & 회원가입 (공통)
     // ====================================================
 
-    /**
-     * 회원가입
-     * @param member 회원 정보
-     * @return 성공 시 1
-     */
     int insertMember(MemberDTO member);
 
-    /**
-     * 로그인용 회원 조회 (Spring Security)
-     * - username(ID) 기준으로 회원 정보 조회
-     */
     MemberDTO getMemberByUsername(String username);
 
-    /**
-     * 아이디 중복 확인 (조원 기능)
-     * @return 0이면 사용 가능, 1 이상이면 중복
-     */
     int countByUsername(String username);
 
 
@@ -47,16 +34,8 @@ public interface MemberMapper {
     // 2. 비밀번호 찾기 (조원 기능)
     // ====================================================
 
-    /**
-     * 회원 존재 여부 확인 (비밀번호 찾기용)
-     * - 아이디, 전화번호 등이 일치하는지 확인
-     * @return 1이면 존재, 0이면 없음
-     */
     int checkUserExists(MemberDTO member);
 
-    /**
-     * 비밀번호 업데이트 (임시 비밀번호 발급 등)
-     */
     void updatePassword(MemberDTO member);
 
 
@@ -64,28 +43,12 @@ public interface MemberMapper {
     // 3. 마이페이지 (내 기능)
     // ====================================================
 
-    /**
-     * UID 기준 회원 조회
-     * - 마이페이지 및 내부 로직에서 PK로 조회할 때 사용
-     */
     MemberDTO getMemberByUid(Long mbUid);
 
-    /**
-     * 회원 정보 수정
-     * - 닉네임, 전화번호, 프로필 아이콘 등 수정
-     */
     int updateMember(MemberDTO member);
 
-    /**
-     * 현재 비밀번호 조회
-     * - 정보 수정 시 기존 비밀번호 검증용
-     */
     String selectPassword(Long mb_uid);
 
-    /**
-     * 닉네임 중복 체크
-     * - 내 UID(mb_uid)는 제외하고 다른 사람과 겹치는지 확인
-     */
     int checkNicknameDuplicate(
         @Param("nickname") String nickname,
         @Param("mb_uid") Long mb_uid
@@ -103,9 +66,31 @@ public interface MemberMapper {
     // ====================================================
 
     /**
-     * 코딩 테스트 기록 조회
+     * 코딩 테스트 기록 조회 (마이페이지용)
      */
     List<ExamHistoryDTO> selectExamHistory(Long mb_uid);
+
+
+    /**
+     * ✅ [수정] 코딩 테스트 풀이 기록 저장
+     * DB의 ex_lang_uid 컬럼이 NOT NULL이므로 ex_lang_uid 파라미터를 추가
+     */
+ // ✅ 파라미터 매핑을 명확히 함
+    void insertExamHistory(
+        @Param("mb_uid") Long mb_uid, 
+        @Param("ex_uid") int ex_uid, 
+        @Param("ex_lang_uid") int ex_lang_uid
+    );
+
+    int checkExamHistoryExists(
+        @Param("mb_uid") Long mb_uid, 
+        @Param("ex_uid") int ex_uid
+    );
+
+    /**
+     * 문제 완료 인원(view_count) 증가
+     */
+    int incrementExamViewCount(int ex_uid);
 
     /**
      * 면접 연습 기록 조회
@@ -115,28 +100,18 @@ public interface MemberMapper {
 
     // ====================================================
     // 5. 회원 탈퇴 (내 기능)
-    // - 자식 데이터(기록) 먼저 삭제 후 부모(회원) 삭제
     // ====================================================
-
-    /**
-     * 1단계: 코딩 테스트 기록 삭제
-     */
+    
+    // 코딩테스트삭제
     int deleteExamHistory(Long mb_uid);
 
-    /**
-     * 1단계: 면접 연습 기록 삭제
-     */
+    // 면접연습기록삭제
     int deleteInterviewHistory(Long mb_uid);
 
-    /**
-     * 2단계: 회원 정보 삭제
-     */
+    // 회원정보삭제
     int deleteMember(Long mb_uid);
 
-	
-	// 사용자 가져오기
-	MemberDTO getMember(String memberUid);
-	
-	// 유저네임 기반 멤버 가져오기
-	MemberDTO getMemberById(String username);
+    MemberDTO getMember(String memberUid);
+    
+    MemberDTO getMemberById(String username);
 }

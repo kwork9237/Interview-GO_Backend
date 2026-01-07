@@ -52,13 +52,12 @@ public class MemberService {
         }
 
         // 2. 4자리 랜덤 숫자 생성 (0000 ~ 9999)
-        // nextInt(10000)은 0~9999 사이의 숫자를 반환, %04d로 빈자리 0 채움
         String tempPw = String.format("%04d", new Random().nextInt(10000));
 
         // 3. 비밀번호 암호화 (DB 저장용)
         String encodedPw = passwordEncoder.encode(tempPw);
 
-        // 4. DB 업데이트 (MyBatis는 명시적으로 update 호출 필요)
+        // 4. DB 업데이트
         MemberDTO mem = new MemberDTO();
         mem.setUsername(member.getUsername());
         mem.setMb_password(encodedPw);
@@ -69,4 +68,27 @@ public class MemberService {
         return tempPw;
     }
 
+    // --- [마이페이지 기능 추가] ---
+
+    /**
+     * ✅ 코딩 테스트 풀이 기록 저장
+     * 컨트롤러에서 보낸 username, ex_uid, ex_lang_uid를 받아 처리합니다.
+     */
+    @Transactional
+    public void recordExamHistory(String username, int ex_uid, int ex_lang_uid) {
+        // 1. 사용자 정보 조회
+        MemberDTO member = mapper.getMemberByUsername(username);
+        if (member == null) return;
+
+        // 2. 이미 풀었는지 중복 체크
+        int alreadySolved = mapper.checkExamHistoryExists(member.getMb_uid(), ex_uid);
+
+        if (alreadySolved == 0) {
+            // 3. DB에 풀이 이력 저장 (언어 ID 포함)
+            mapper.insertExamHistory(member.getMb_uid(), ex_uid, ex_lang_uid);
+            
+            // 4. 문제 완료 카운트 증가
+            mapper.incrementExamViewCount(ex_uid);
+        }
+    }
 }

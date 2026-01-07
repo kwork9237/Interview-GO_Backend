@@ -142,7 +142,7 @@ public class MyPageController {
     // =================================================================================
     @GetMapping("/exam-history")
     public ResponseEntity<List<ExamHistoryDTO>> getExamHistory(
-            @RequestParam("mb_uid") Long mb_uid) {
+            @RequestParam(name = "mb_uid") Long mb_uid) { // ✅ 수정: 리액트 쿼리스트링 mb_uid와 확실하게 연결
         return ResponseEntity.ok(myPageService.getExamHistory(mb_uid));
     }
 

@@ -55,7 +55,7 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
 
-            // 4. 요청 권한 설정 (여기가 핵심!)
+            // 4. 요청 권한 설정
             .authorizeHttpRequests(auth -> auth
                 // Pre-flight Request 허용
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -75,8 +75,11 @@ public class SecurityConfig {
                 // AI, 면접 관련 허용
                 .requestMatchers("/api/ai/**", "/api/interview/**").permitAll()
                 
-                // 🚨 [추가된 부분] 아이콘 목록 조회는 로그인 없이도(또는 토큰 에러나도) 볼 수 있게 허용!
+                // ✅ [수정된 부분] 마이페이지 관련 설정
+                // 아이콘 목록은 로그인 없이도 가능
                 .requestMatchers("/api/mypage/default-icons").permitAll()
+                // 그 외 마이페이지 기록 조회/수정 등은 인증(토큰) 필요
+                .requestMatchers("/api/mypage/**").authenticated() 
                 
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()

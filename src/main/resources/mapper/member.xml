@@ -3,116 +3,83 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.interviewgo.mapper.MemberMapper">
-    <select id="getMemberByUsername" resultType="member">
-        SELECT *
-        FROM member
-        WHERE username = #{username}
+
+    <select id="getMemberByUsername" resultType="com.interviewgo.dto.MemberDTO">
+        SELECT * FROM member WHERE username = #{username}
     </select>
 
-	<!-- username 중복검사 -->
-	<select id="countByUsername" parameterType="String" resultType="int">
-        SELECT COUNT(*) 
-        FROM member 
-        WHERE username = #{username}
+    <select id="countByUsername" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM member WHERE username = #{username}
     </select>
 
-
-    <select id="checkUserExists" parameterType="member" resultType="int">
-        SELECT COUNT(*)
-        FROM member
-        WHERE username = #{username}
-          AND mb_pnumber = #{mb_pnumber}
-    </select>
-
-
-    <insert id="insertMember" parameterType="member">
+    <insert id="insertMember" parameterType="com.interviewgo.dto.MemberDTO">
         INSERT INTO member (
-            username, 
-            mb_password, 
-            mb_nickname, 
-            mb_pnumber, 
-            role, 
-            mb_date,
-            mb_icon
+            username, mb_password, mb_nickname, mb_pnumber, role, mb_date, mb_icon
         ) VALUES (
-            #{username}, 
-            #{mb_password}, 
-            #{mb_nickname}, 
-            #{mb_pnumber}, 
-            #{role}, 
-            NOW(),
-            '/images/default.png'
+            #{username}, #{mb_password}, #{mb_nickname}, #{mb_pnumber}, #{role}, NOW(), '/images/default.png'
         )
     </insert>
 
+    <select id="checkUserExists" parameterType="com.interviewgo.dto.MemberDTO" resultType="int">
+        SELECT COUNT(*) FROM member WHERE username = #{username} AND mb_pnumber = #{mb_pnumber}
+    </select>
 
-    <update id="updatePassword" parameterType="member">
-        UPDATE member
-        SET mb_password = #{mb_password}
-        WHERE username = #{username}
+    <update id="updatePassword" parameterType="com.interviewgo.dto.MemberDTO">
+        UPDATE member SET mb_password = #{mb_password} WHERE username = #{username}
     </update>
 
-    <update id="updateMember" parameterType="member">
+    <update id="updateMember" parameterType="com.interviewgo.dto.MemberDTO">
         UPDATE member
         <set>
-            <if test="mb_password != null and mb_password != ''">
-                mb_password = #{mb_password},
-            </if>
-            <if test="mb_nickname != null and mb_nickname != ''">
-                mb_nickname = #{mb_nickname},
-            </if>
-            <if test="mb_pnumber != null and mb_pnumber != ''">
-                mb_pnumber = #{mb_pnumber},
-            </if>
-            <if test="mb_icon != null and mb_icon != ''">
-                mb_icon = #{mb_icon},
-            </if>
+            <if test="mb_password != null and mb_password != ''">mb_password = #{mb_password},</if>
+            <if test="mb_nickname != null and mb_nickname != ''">mb_nickname = #{mb_nickname},</if>
+            <if test="mb_pnumber != null and mb_pnumber != ''">mb_pnumber = #{mb_pnumber},</if>
+            <if test="mb_icon != null and mb_icon != ''">mb_icon = #{mb_icon},</if>
         </set>
         WHERE mb_uid = #{mb_uid}
     </update>
 
-    <select id="getMemberByUid" resultType="member">
-        SELECT *
-        FROM member
-        WHERE mb_uid = #{mbUid}
+    <select id="getMemberByUid" resultType="com.interviewgo.dto.MemberDTO">
+        SELECT * FROM member WHERE mb_uid = #{mbUid}
     </select>
 
     <select id="selectPassword" parameterType="Long" resultType="string">
-        SELECT mb_password
-        FROM member
-        WHERE mb_uid = #{mb_uid}
+        SELECT mb_password FROM member WHERE mb_uid = #{mb_uid}
     </select>
 
     <select id="checkNicknameDuplicate" resultType="int">
-        SELECT COUNT(*)
-        FROM member
-        WHERE mb_nickname = #{nickname}
-          AND mb_uid != #{mb_uid}
+        SELECT COUNT(*) FROM member WHERE mb_nickname = #{nickname} AND mb_uid != #{mb_uid}
     </select>
 
+    <select id="selectExamHistory" parameterType="Long" resultType="com.interviewgo.dto.ExamHistoryDTO">
+    SELECT 
+        h.hist_uid,
+        h.mb_uid,
+        h.ex_uid,
+        h.hist_date,
+        e.ex_title,       e.ex_level,       l.ex_lang_name    FROM exam_history h
+    JOIN exam e ON h.ex_uid = e.ex_uid
+    LEFT JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
+    WHERE h.mb_uid = #{mb_uid}
+    ORDER BY h.hist_uid DESC
+</select>
 
-    <select id="selectExamHistory" parameterType="Long" resultType="interviewHistory">
-        SELECT
-            h.hist_uid,
-            h.hist_score,
-            h.hist_date,
-            e.ex_title,
-            e.ex_level,
-            l.ex_lang_name
-        FROM exam_history h
-        INNER JOIN exam e ON h.ex_uid = e.ex_uid AND h.ex_lang_uid = e.ex_lang_uid
-        INNER JOIN exam_language l ON h.ex_lang_uid = l.ex_lang_uid
-        WHERE h.mb_uid = #{mb_uid}
-        ORDER BY h.hist_date DESC
+    <select id="checkExamHistoryExists" resultType="int">
+        SELECT COUNT(*) FROM exam_history WHERE mb_uid = #{mb_uid} AND ex_uid = #{ex_uid}
     </select>
 
-    <select id="selectInterviewHistory" parameterType="Long" resultType="interviewHistory">
-        SELECT *
-        FROM interview_history
-        WHERE mb_uid = #{mb_uid}
-        ORDER BY iv_date DESC
-    </select>
+    <insert id="insertExamHistory">
+        INSERT INTO exam_history (mb_uid, ex_uid, ex_lang_uid)
+        VALUES (#{mb_uid}, #{ex_uid}, #{ex_lang_uid})
+    </insert>
 
+    <update id="incrementExamViewCount">
+        UPDATE exam SET view_count = view_count + 1 WHERE ex_uid = #{ex_uid}
+    </update>
+
+    <select id="selectInterviewHistory" parameterType="Long" resultType="com.interviewgo.dto.interview.InterviewHistoryDTO">
+        SELECT * FROM interview_history WHERE mb_uid = #{mb_uid} ORDER BY iv_date DESC
+    </select>
 
     <delete id="deleteExamHistory" parameterType="Long">
         DELETE FROM exam_history WHERE mb_uid = #{mb_uid}
@@ -126,8 +93,8 @@
         DELETE FROM member WHERE mb_uid = #{mb_uid}
     </delete>
 
-	<select id="getMemberById" parameterType="String">
-		SELECT * FROM member WHERE username = #{username}
-	</select>
+    <select id="getMemberById" parameterType="String" resultType="com.interviewgo.dto.MemberDTO">
+        SELECT * FROM member WHERE username = #{username}
+    </select>
 
 </mapper>

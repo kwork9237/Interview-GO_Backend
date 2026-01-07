@@ -41,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000") // ✅ 수정: 리액트 포트와의 통신(403 방지)을 위해 추가
 public class MyPageController { 
     
     // 마이페이지 관련 로직 전담 서비스
@@ -141,7 +142,7 @@ public class MyPageController {
     // =================================================================================
     @GetMapping("/exam-history")
     public ResponseEntity<List<ExamHistoryDTO>> getExamHistory(
-            @RequestParam("mb_uid") Long mb_uid) {
+            @RequestParam(name = "mb_uid") Long mb_uid) { // ✅ 수정: 리액트 쿼리스트링 mb_uid와 확실하게 연결
         return ResponseEntity.ok(myPageService.getExamHistory(mb_uid));
     }
 

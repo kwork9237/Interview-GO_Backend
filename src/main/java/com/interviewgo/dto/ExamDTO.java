@@ -1,35 +1,22 @@
 package com.interviewgo.dto;
 
 import org.apache.ibatis.type.Alias;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Alias("exam")
 public class ExamDTO {
-	@JsonProperty("exUid")
-	private int ex_uid;
-
-	// 매핑값 찾지 못함
-	private int ex_lang_uid;
-	
-	@JsonProperty("exTitle")
-	private String ex_title;
-	
-	@JsonProperty("exContent")
-	private String ex_content;
-	
-	@JsonProperty("exLevel")
-	private short ex_level;
-	
-	@JsonProperty("exAnswerList")
-	private String ex_answer_list;
-	
-	// 매핑값 찾지 못함
-	private Short ex_answer_correct;
-	
-	@JsonProperty("viewCount")
-	private int view_count;
+    private int exUid;          // ex_uid와 매핑
+    private int exLangUid;      // ex_lang_uid와 매핑
+    private String exTitle;     // ex_title과 매핑
+    private String exContent;   // ex_content와 매핑
+    private short exLevel;      // ex_level과 매핑
+    private String exAnswerList;
+    private Short exAnswerCorrect;
+    private int viewCount;      // view_count와 매핑
+    private String exLangName;  // 조인해서 가져오는 언어 이름
 }

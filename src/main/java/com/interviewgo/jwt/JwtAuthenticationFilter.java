@@ -1,7 +1,6 @@
 package com.interviewgo.jwt;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtTokenProvider.validateToken(token)) {
                     // 4. 토큰에서 username 추출
                     String username = jwtTokenProvider.getUsername(token);
-                    System.out.println("[JWT 필터] 유효한 토큰입니다. username: " + username);
+//                    System.out.println("[JWT 필터] 유효한 토큰입니다. username: " + username);
 
                     // 5. UserDetails 로드
                     CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
@@ -52,29 +51,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // 7. SecurityContext에 저장 (인증 완료)
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    System.out.println("[JWT 필터] 유효하지 않은 토큰입니다.");
+//                    System.out.println("[JWT 필터] 유효하지 않은 토큰입니다.");
                 }
             } catch (Exception e) {
-                System.out.println("[JWT 필터] 예외 발생: " + e.getMessage());
+//                System.out.println("[JWT 필터] 예외 발생: " + e.getMessage());
             }
         }
 
         // 8. 다음 필터로 전달
         filterChain.doFilter(request, response);
     }
-    
-    // 필터링 제외
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        String path = request.getServletPath();
-//        
-//        // 패턴을 리스트로 관리하면 편리합니다.
-//        List<String> skipPaths = List.of(
-//            "/api/ai/**",
-//            "/api/interview/**"
-//        );
-//
-//        return skipPaths.stream()
-//                .anyMatch(p -> pathMatcher.match(p, path));
-//    }
 }

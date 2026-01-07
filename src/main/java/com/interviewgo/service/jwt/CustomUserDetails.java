@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor          // 기본 생성자  
 public class CustomUserDetails implements UserDetails {
 
-	private Long mb_Uid;
+	private Long mb_uid;
     private String username;
     private String password;
     private String role;
@@ -27,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
     // 🌟 [필수 추가] DB 데이터(MemberDTO)를 이 객체로 변환하는 생성자
     // 이 부분이 없으면 로그인할 때 "MemberDTO를 CustomUserDetails로 못 바꿉니다" 에러가 납니다.
     public CustomUserDetails(MemberDTO member) {
-    	this.mb_Uid = member.getMb_uid();
+    	this.mb_uid = member.getMb_uid();
         this.username = member.getUsername();
         this.password = member.getMb_password(); // DB의 mb_password를 시큐리티 password로 연결
         this.role = member.getRole();

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 // 면접 세션을 구분하기 위해서 사용함.
 
-public class UUIDUtils {
+public class UUIDUtil {
 	// UUID 생성
 	public static String GenerateUUID() {
 		// 랜덤 UUID 생성

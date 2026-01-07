@@ -75,12 +75,12 @@ public class MemberController {
     		Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getMb_password()));
 
-
-            // 2️⃣ JWT 토큰 생성
-            String token = jwtTokenProvider.createToken(authentication.getName(), "USER");
-            
-            // 3️⃣ DB에서 상세 정보 조회 (아이콘, 닉네임 등을 위해 필요)
+            // 2. DB에서 상세 정보 조회 (아이콘, 닉네임 등을 위해 필요)
             MemberDTO loginMember = memberService.getMemberByUsername(user.getUsername());
+            
+            // 3. JWT 토큰 생성
+            // token에 member uid까지 넣기 위해 순서를 변경함
+            String token = jwtTokenProvider.createToken(authentication.getName(), "USER", loginMember.getMb_uid());
             
             // 4️⃣ 응답 데이터 구성 (Token + User Info)
             Map<String, Object> response = new HashMap<>();

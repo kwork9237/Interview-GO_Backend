@@ -110,7 +110,6 @@ public interface MemberMapper {
 
     // 회원정보삭제
     int deleteMember(Long mb_uid);
-
     MemberDTO getMember(String memberUid);
     
     MemberDTO getMemberById(String username);

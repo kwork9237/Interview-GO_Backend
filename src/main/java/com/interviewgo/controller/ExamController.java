@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/exams")
-@CrossOrigin(origins = "http://localhost:3000") 
 public class ExamController {
 
     private final ExamMapper ExamDao;

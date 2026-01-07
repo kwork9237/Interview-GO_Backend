@@ -13,16 +13,14 @@
 	</select>
 	 -->
 	
-	<!-- 멤버 UID는 일시적으로 제거함 (2025 12 31) -->
 	<!-- ID 기반 단일 개체 반환 -->
-	
 	<select id="getLastInterviewHistoryBySsid">
-		SELECT * FROM interview_history WHERE iv_ssid = #{iv_ssid} ORDER BY iv_step DESC LIMIT 1
+		SELECT * FROM interview_history WHERE iv_ssid = #{iv_ssid} AND mb_uid = #{mb_uid} ORDER BY iv_step DESC LIMIT 1
 	</select>
 	
 	<!-- ID 기반 단일 세션의 전체 개체 반환 -->
 	<select id="getAllInterviewHistoryBySsid">
-		SELECT * FROM interview_history WHERE iv_ssid = #{iv_ssid}
+		SELECT * FROM interview_history WHERE iv_ssid = #{iv_ssid} AND mb_uid = #{mb_uid}
 	</select>
 	
 	<!-- 단일 개체 삽입 -->
@@ -46,7 +44,7 @@
 	</insert>
 	
 	<!-- ssid 기반 면접기록 삭제 -->
-	<delete id="deleteInterviewHistoryBySsid" parameterType="String">
-		DELETE interview_history WHERE iv_ssid = #{iv_ssid}
+	<delete id="deleteInterviewHistoryBySsid">
+		DELETE FROM interview_history WHERE iv_ssid = #{iv_ssid} AND mb_uid = #{mb_uid}
 	</delete>
 </mapper>

@@ -5,7 +5,7 @@
   
 <mapper namespace="com.interviewgo.mapper.WordCloudMapper">
 	<delete id="deleteAllWords">
-        DELETE FROM word_cloud
+        TRUNCATE word_cloud
     </delete>
     
 	<insert id="upsertWord" parameterType="wordcloud">

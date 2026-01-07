@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Alias("exam")
 public class ExamDTO {
     private int exUid;          // ex_uid와 매핑

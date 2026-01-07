@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;       // 👈 상태 코드 (200, 400 등)
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.ExamHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
+import com.interviewgo.dto.PasswordUpdateDTO;
 import com.interviewgo.service.MemberService;
 import com.interviewgo.service.MyPageService;
 
@@ -204,4 +205,23 @@ public class MyPageController {
             return ResponseEntity.status(500).body(new ArrayList<>());
         }
     }
+    
+    /**
+     * [추가됨] 비밀번호 변경 API
+     * [PUT] /api/mypage/password
+     */
+    @PutMapping("/password")
+    public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateDTO dto) {
+        try {
+            // 서비스 로직 호출 (검증 -> 암호화 -> 저장)
+            myPageService.updatePassword(dto);
+            
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } catch (RuntimeException e) {
+            // 서비스에서 던진 예외 ("비밀번호 불일치" 등)를 잡아서 프론트에 메시지로 전달
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    
+    
 }

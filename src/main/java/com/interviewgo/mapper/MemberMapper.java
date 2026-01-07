@@ -91,7 +91,13 @@ public interface MemberMapper {
         @Param("mb_uid") Long mb_uid
     );
 
-
+    /**
+     * [추가됨] 마이페이지용 비밀번호 변경 (mb_uid 기준)
+     * - 이름을 'updatePasswordByUid'로 변경해서 충돌을 피합니다.
+     */
+    void updatePasswordByUid(@Param("mb_uid") Long mbUid, @Param("mb_password") String password);
+    
+    
     // ====================================================
     // 4. 활동 기록 조회 (내 기능)
     // ====================================================

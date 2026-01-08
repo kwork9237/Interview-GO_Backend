@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .requestMatchers("/images/**", "/static/**", "/css/**", "/js/**").permitAll()
                 
                 // 로그인, 회원가입 등 허용
-                .requestMatchers("/join", "/login", "/find-password", "/check-id", "/").permitAll()
+                .requestMatchers("/api/join", "/api/login", "/api/find-password", "/api/check-id").permitAll()
                 
                 // 유튜브, 취업 허용
                 .requestMatchers("/api/work24/list", "/api/wordcloud/list", "/api/youtube/check").permitAll()
@@ -104,7 +104,11 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(
+    	    "http://localhost:3000",          // 로컬 개발용
+    	    "http://du-project.kro.kr",       // 실제 서비스 도메인
+    	    "https://du-project.kro.kr"       // HTTPS 적용 후
+    	));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         

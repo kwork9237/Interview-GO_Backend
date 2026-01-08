@@ -18,7 +18,6 @@ import java.util.Map;
 public class ExamController {
 
     private final ExamMapper examMapper;
-    private final MemberService memberService;
     private final ExamService examService;
 
     @GetMapping("/{id}")

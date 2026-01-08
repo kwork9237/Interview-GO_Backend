@@ -39,13 +39,10 @@
 		DELETE FROM interview_history WHERE iv_ssid = #{iv_ssid} AND mb_uid = #{mb_uid}
 	</delete>
 	
-	<!-- 
-	위에꺼랑 묶음.
-	<delete id="deleteInterviewHistory" parameterType="Long">
+	<delete id="deleteInterviewHistoryByMbid" parameterType="Long">
 		DELETE FROM interview_history
 		WHERE mb_uid = #{mb_uid}
 	</delete>
-	 -->
 	
 	<!-- 면접 기록 가져오기. (시간, step 순서) -->
 	<select id="selectInterviewHistory" parameterType="Long" resultType="interviewHistory">

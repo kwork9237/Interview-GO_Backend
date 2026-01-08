@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.WordCloudDTO;
+import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.mapper.WordCloudMapper;
+import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.WordCloudService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/wordcloud")
 public class WordCloudController {
-    @Autowired private WordCloudService wordCloudService;
-    @Autowired private WordCloudMapper wordCloudMapper;
+    private final WordCloudService wordCloudService;
+    private final WordCloudMapper wordCloudMapper;
 
     // 데이터 수집 실행 (관리자용)
     @GetMapping("/admin/update-all")

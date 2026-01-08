@@ -26,5 +26,5 @@ public interface InterviewHistoryMapper {
 	List<InterviewHistoryDTO> selectInterviewHistory(Long mb_uid);
 	
 	// 면접 연습 기록 삭제
-    int deleteInterviewHistory(Long mb_uid);
+    int deleteInterviewHistoryByMbid(Long mb_uid);
 }

@@ -66,7 +66,7 @@ public class MyPageService {
 			return false;
 		}
 		examMapper.deleteExamHistory(mbUid);
-		interviewHistoryMapper.deleteInterviewHistory(mbUid);
+		interviewHistoryMapper.deleteInterviewHistoryByMbid(mbUid);
 		return memberMapper.deleteMember(mbUid) > 0;
 	}
 

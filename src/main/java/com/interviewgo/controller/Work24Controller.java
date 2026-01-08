@@ -8,21 +8,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.WorkNewsDTO;
+import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.mapper.Work24Mapper;
+import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.Work24Service;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * 고용24 오픈 API 관련 요청을 처리하는 컨트롤러입니다.
  * 외부 데이터 수집 및 프론트엔드(React) 데이터 제공 역할을 수행합니다.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/work24")
 public class Work24Controller {
-    @Autowired
-    private Work24Service work24Service;
-    
-    @Autowired
-    private Work24Mapper work24Mapper;
+    private final Work24Service work24Service;
+    private final Work24Mapper work24Mapper;
 
     /**
      * 고용24 오픈 API를 호출하여 최신 IT 채용 정보를 DB에 수집/갱신합니다.

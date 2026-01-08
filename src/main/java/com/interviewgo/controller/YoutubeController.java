@@ -9,17 +9,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.YoutubeDTO;
+import com.interviewgo.jwt.JwtTokenProvider;
+import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.YoutubeService;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * 유튜브 API를 통해 영상 데이터를 수집하고, 수집한 영상ID를 프론트에 제공 하는 컨트롤러.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/youtube")
 public class YoutubeController {
-
-    @Autowired
-    private YoutubeService youtubeService;
+    private final YoutubeService youtubeService;
 
     /**
      * [데이터 수집 API]

@@ -2,8 +2,9 @@ package com.interviewgo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class FindPwResponse {
 	private String tempPassword;		 // 프론트엔드가 받을 임시 비밀번호

@@ -14,7 +14,7 @@
 	</insert>
 	
 	<!-- 인터뷰 세션 선택 -->
-	<select id="getInterviewSessionCount">
+	<select id="selectInterviewSessionCount">
 		SELECT COUNT(*) FROM interview_session WHERE iv_ssid = #{iv_ssid} AND mb_uid = #{mb_uid}
 	</select>
 	

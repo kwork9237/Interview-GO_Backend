@@ -1,4 +1,4 @@
-package com.interviewgo.dto;
+package com.interviewgo.dto.exam;
 
 import java.sql.Date;
 import org.apache.ibatis.type.Alias;

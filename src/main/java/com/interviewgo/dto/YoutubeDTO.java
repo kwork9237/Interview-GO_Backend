@@ -9,5 +9,4 @@ import lombok.Data;
 public class YoutubeDTO {
     private String ytKey;
     private String ytCategory;
-
 }

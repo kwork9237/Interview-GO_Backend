@@ -63,7 +63,7 @@ public class ApiAIService {
 			""";
 		}
 
-		AIResponseDTO.Chat res =  chatClient.prompt()
+		AIResponseDTO.Chat res = chatClient.prompt()
 	        .system(SYSTEM_PROMPT) // 핵심 지시만 전달
 	        .user(query)
 	        .call()

@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interviewgo.dto.ExamHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.dto.PasswordUpdateDTO;
+import com.interviewgo.dto.exam.ExamHistoryDTO;
 import com.interviewgo.service.MemberService;
 import com.interviewgo.service.MyPageService;
 

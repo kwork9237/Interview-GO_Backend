@@ -9,11 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interviewgo.dto.ExamHistoryDTO;
 import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.dto.PasswordUpdateDTO;
+import com.interviewgo.dto.exam.ExamHistoryDTO;
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
+import com.interviewgo.mapper.ExamMapper;
 import com.interviewgo.mapper.MemberMapper;
+import com.interviewgo.mapper.interview.InterviewHistoryMapper;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ import lombok.Setter;
 public class MyPageService {
 
 	private final MemberMapper memberMapper;
+	private final ExamMapper examMapper;
+	private final InterviewHistoryMapper interviewHistoryMapper;
 	private final PasswordEncoder passwordEncoder;
 
 	@Getter
@@ -61,15 +65,15 @@ public class MyPageService {
 		if (dbPassword == null || !passwordEncoder.matches(inputPassword, dbPassword)) {
 			return false;
 		}
-		memberMapper.deleteExamHistory(mbUid);
-		memberMapper.deleteInterviewHistory(mbUid);
+		examMapper.deleteExamHistory(mbUid);
+		interviewHistoryMapper.deleteInterviewHistory(mbUid);
 		return memberMapper.deleteMember(mbUid) > 0;
 	}
 
 	// 기록 조회 메서드들 [2026-01-06 수정]
 	public List<InterviewGroupDTO> getGroupedInterviewHistory(Long mbUid) {
 		// 1. DB에서 전체 질문/답변 리스트를 가져옴
-		List<InterviewHistoryDTO> rawList = memberMapper.selectInterviewHistory(mbUid);
+		List<InterviewHistoryDTO> rawList = interviewHistoryMapper.selectInterviewHistory(mbUid);
 
 		// 2. iv_ssid(세션 ID)를 키로 사용하는 Map 생성
 		Map<String, List<InterviewHistoryDTO>> groupedMap = new LinkedHashMap<>();
@@ -97,7 +101,7 @@ public class MyPageService {
 	}
 
 	public List<ExamHistoryDTO> getExamHistory(Long mbUid) {
-		return memberMapper.selectExamHistory(mbUid);
+		return examMapper.selectExamHistory(mbUid);
 	}
 
 	// 비밀번호 변경 로직 [2026-01-06 추가]

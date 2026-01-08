@@ -45,12 +45,12 @@ public class InterviewService {
 		// 면접 출력 메시지
         String firstMsg = "안녕하세요. 저희 회사에 지원하게 된 계기와 간단한 자기소개 부탁드립니다.";
 
-        int sessionCount = sessionMapper.getInterviewSessionCount(uuid, memberUid);
+        int sessionCount = sessionMapper.selectInterviewSessionCount(uuid, memberUid);
         
         if(sessionCount != 1) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없거나 이미 진행 중인 세션입니다.");
         
         // 마지막 대화 기록 불러오기
-        InterviewHistoryDTO history = historyMapper.getLastInterviewHistoryBySsid(uuid, memberUid);
+        InterviewHistoryDTO history = historyMapper.selectLastInterviewHistoryBySsid(uuid, memberUid);
         
         // 대화 기록이 없으면 기본 대화기록 삽입.
         if(history == null) {
@@ -80,7 +80,7 @@ public class InterviewService {
 	
 	// 대화내역 불러오기
 	public List<InterviewHistoryDTO> getHistory(String ssid, Long memberUid) {
-        return historyMapper.getAllInterviewHistoryBySsid(ssid, memberUid);
+        return historyMapper.selectAllInterviewHistoryBySsid(ssid, memberUid);
     }
 	
 	// 면접 중도 이탈
@@ -94,7 +94,7 @@ public class InterviewService {
 	@Transactional
     public short recordHistory(String ssid, Long mbUid, String context, String feedback, double score) {
         // 1. 기존 히스토리 정보 가져오기 (Step 계산 등을 위해)
-        InterviewHistoryDTO hist = historyMapper.getLastInterviewHistoryBySsid(ssid, mbUid);
+        InterviewHistoryDTO hist = historyMapper.selectLastInterviewHistoryBySsid(ssid, mbUid);
         
         short step = (short) (hist.getIv_step() + 1);
         

@@ -20,6 +20,7 @@ public class AIConfig {
 	private String baseurl;
 
     // LocalAIService의 생성자 제거용
+	// 현재 프로젝트에서 사용하지 않음 (26 01 08)
     @Bean
     WebClient localAiWebClient() {
         return WebClient.builder()

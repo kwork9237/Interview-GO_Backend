@@ -10,7 +10,7 @@ public interface InterviewSessionMapper {
 	int insertInterviewSession(InterviewSessionDTO interviewSession);
 	
 	// 채팅 세션 선택 (현재 사용하지 않음)
-	int getInterviewSessionCount(@Param("iv_ssid")String uuid, @Param("mb_uid") Long mbUid);
+	int selectInterviewSessionCount(@Param("iv_ssid")String uuid, @Param("mb_uid") Long mbUid);
 	
 	// 단일 세션 삭제
 	int deleteInterviewSession(@Param("iv_ssid")String uuid, @Param("mb_uid") Long mbUid);

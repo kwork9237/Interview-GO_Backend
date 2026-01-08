@@ -47,25 +47,46 @@
         WHERE ex_uid = #{id}
     </select>
     
-    <select id="getExamHistory" resultType="exam">
-        SELECT 
-            h.hist_uid AS histUid,
-            h.ex_uid AS exUid,
-            h.hist_date AS histDate,
-            e.ex_title AS exTitle,       
-            e.ex_level AS exLevel,       
-            l.ex_lang_name AS exLangName 
-        FROM exam_history h
-        LEFT JOIN exam e ON h.ex_uid = e.ex_uid
-        LEFT JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
-        WHERE h.mb_uid = #{mb_uid}
-        ORDER BY h.hist_date DESC
-    </select>
-
-    <update id="updateExamViewCount">
+    <update id="updateㅂExamViewCount">
         UPDATE exam 
         SET view_count = IFNULL(view_count, 0) + 1 
-        WHERE ex_uid = #{id}
+        WHERE
+         ex_uid = #{id}
     </update>
 
+	<select id="selectExamHistory" parameterType="Long" resultType="examHistory">
+	    SELECT 
+	        h.hist_uid,
+	        h.mb_uid,
+	        h.ex_uid,
+	        h.hist_date,
+	        e.ex_title,
+			e.ex_level,
+			l.ex_lang_name    
+		FROM exam_history h
+	    	JOIN exam e ON h.ex_uid = e.ex_uid
+	    	LEFT JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
+	    WHERE h.mb_uid = #{mb_uid}
+	    ORDER BY h.hist_uid DESC
+	</select>
+	
+	<insert id="insertExamHistory">
+        INSERT INTO exam_history (mb_uid, ex_uid, ex_lang_uid)
+        VALUES (#{mb_uid}, #{ex_uid}, #{ex_lang_uid})
+    </insert>
+
+    <update id="incrementExamViewCount">
+        UPDATE exam
+		SET view_count = view_count + 1
+		WHERE ex_uid = #{ex_uid}
+    </update>
+    
+    <select id="checkExamHistoryExists">
+    	SELECT COUNT(*) FROM exam_history WHERE mb_uid = #{mb_uid} AND ex_uid = #{ex_uid}
+    </select>
+    
+    <delete id="deleteExamHistory" parameterType="Long">
+		DELETE FROM exam_history
+		WHERE mb_uid = #{mb_uid}
+	</delete>
 </mapper>

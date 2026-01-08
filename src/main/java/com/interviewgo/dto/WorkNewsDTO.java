@@ -8,7 +8,7 @@ import lombok.Data;
 @Alias("worknews")
 public class WorkNewsDTO {
     
-    private String empSeqno;              // 공개채용공고순번 (DB의 wkseqno로 들어감)
+    private String empSeqno;               // 공개채용공고순번 (DB의 wkseqno로 들어감)
     private String empWantedTitle;         // 채용제목 (DB의 wktitle로 들어감)
     private String empBusiNm;              // 채용업체명 (DB의 wk_busi_nm으로 들어감)
     private String coClcdNm;               // 기업구분명 (DB의 co_clcd_nm으로 들어감)

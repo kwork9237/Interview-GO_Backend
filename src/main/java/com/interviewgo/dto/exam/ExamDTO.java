@@ -1,9 +1,7 @@
-package com.interviewgo.dto;
+package com.interviewgo.dto.exam;
 
 import org.apache.ibatis.type.Alias;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @Alias("exam")

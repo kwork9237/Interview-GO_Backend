@@ -1,7 +1,8 @@
 package com.interviewgo.controller;
 
-import com.interviewgo.dto.ExamDTO;
+import com.interviewgo.dto.exam.ExamDTO;
 import com.interviewgo.mapper.ExamMapper;
+import com.interviewgo.service.ExamService;
 import com.interviewgo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -16,12 +17,13 @@ import java.util.Map;
 @RequestMapping("/api/exams")
 public class ExamController {
 
-    private final ExamMapper ExamDao;
+    private final ExamMapper examMapper;
     private final MemberService memberService;
+    private final ExamService examService;
 
     @GetMapping("/{id}")
     public ExamDTO getExam(@PathVariable(name = "id") int uid) {
-        return ExamDao.getExamDetailByUid(uid);
+        return examMapper.getExamDetailByUid(uid);
     }
 
     @PostMapping("/{id}/complete")
@@ -30,14 +32,14 @@ public class ExamController {
             String username = authentication.getName();
             
             // ✅ DB에서 실제 등록된 문제 정보를 가져와서 외래키(언어ID)를 정확히 맞춤
-            ExamDTO examData = ExamDao.getExamDetailByUid(uid);
+            ExamDTO examData = examMapper.getExamDetailByUid(uid);
             
             if (examData != null) {
                 // application.properties 설정 덕분에 exLangUid에 정확한 값이 담깁니다.
-                memberService.recordExamHistory(username, uid, examData.getExLangUid());
+                examService.recordExamHistory(username, uid, examData.getExLangUid());
             }
         } else {
-            ExamDao.updateExamViewCount(uid);
+        	examMapper.updateExamViewCount(uid);
         }
     }
 
@@ -48,8 +50,8 @@ public class ExamController {
             @RequestParam(name = "lang", required = false, defaultValue = "전체") String lang
     ) {
         int offset = page * size;
-        int totalElements = ExamDao.getExamCount(lang);
-        List<ExamDTO> content = ExamDao.getExamListWithPaging(lang, size, offset);
+        int totalElements = examMapper.getExamCount(lang);
+        List<ExamDTO> content = examMapper.getExamListWithPaging(lang, size, offset);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", content);

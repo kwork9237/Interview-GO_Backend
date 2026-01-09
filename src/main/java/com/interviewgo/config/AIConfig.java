@@ -1,4 +1,4 @@
-package com.interviewgo.config.ai;
+package com.interviewgo.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;

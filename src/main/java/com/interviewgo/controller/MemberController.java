@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interviewgo.dto.FindPwResponse;
-import com.interviewgo.dto.MemberDTO;
-import com.interviewgo.dto.LoginResponseDTO;
+import com.interviewgo.dto.member.FindPwResponseDTO;
+import com.interviewgo.dto.member.LoginResponseDTO;
+import com.interviewgo.dto.member.MemberDTO;
 import com.interviewgo.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -77,15 +77,15 @@ public class MemberController {
             String tempPw = memberService.createTempPassword(request);
             
             // 성공 시: { "tempPassword": "0000", "message": "..." } 반환
-            return ResponseEntity.ok(new FindPwResponse(tempPw, "임시 비밀번호 발급 성공"));
+            return ResponseEntity.ok(new FindPwResponseDTO(tempPw, "임시 비밀번호 발급 성공"));
 
         } catch (IllegalArgumentException e) {
             // 유저 없음 에러 (400 Bad Request)
 
-            return ResponseEntity.badRequest().body(new FindPwResponse(null, e.getMessage()));
+            return ResponseEntity.badRequest().body(new FindPwResponseDTO(null, e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body(new FindPwResponse(null, "서버 오류 발생"));
+            return ResponseEntity.internalServerError().body(new FindPwResponseDTO(null, "서버 오류 발생"));
         }
     }
 }

@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interviewgo.dto.LoginResponseDTO;
-import com.interviewgo.dto.MemberDTO;
+import com.interviewgo.dto.member.LoginResponseDTO;
+import com.interviewgo.dto.member.MemberDTO;
 import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.mapper.MemberMapper;
 

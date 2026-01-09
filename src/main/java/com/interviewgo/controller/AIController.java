@@ -3,17 +3,17 @@ package com.interviewgo.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.ai.AIRequestDTO;
 import com.interviewgo.dto.ai.AIResponseDTO;
-import com.interviewgo.jwt.JwtTokenProvider;
 import com.interviewgo.service.ai.ApiAIService;
 import com.interviewgo.service.ai.LocalAIService;
+import com.interviewgo.service.jwt.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,21 +23,17 @@ import lombok.RequiredArgsConstructor;
 public class AIController {
 	private final LocalAIService localAi;
 	private final ApiAIService apiAi;
-	private final JwtTokenProvider provider;
 	
 	// API 모드
 	// chat model 전용 답변
 	@PostMapping("/server/chat")
 	public ResponseEntity<?> chatResponseAPI(
-			@RequestHeader("Authorization") String token,
+			@AuthenticationPrincipal CustomUserDetails userData,
 			@RequestBody AIRequestDTO data
 			) {
 
-		// 토큰에서 member uid 추출
-		Long mbUid = provider.getMemberUid(token.substring(7));
-		
 		// Service에 처리 요청
-		AIResponseDTO.Chat res = apiAi.requestGemini(data.getQuery(), data.getUuid(), mbUid);
+		AIResponseDTO.Chat res = apiAi.requestGemini(data.getQuery(), data.getUuid(), userData.getMb_uid());
 
 		return ResponseEntity.ok(Map.of("data", res));
 	}
@@ -73,15 +69,16 @@ public class AIController {
 	// Local API 모드
 	@PostMapping("/local/chat")
 	public ResponseEntity<?> chatResponseLocal(
-			@RequestHeader("Authorization") String token,
+			@AuthenticationPrincipal CustomUserDetails userData,
 			@RequestBody AIRequestDTO data
 			) {
 
-		// 토큰에서 member uid 추출
-		Long mbUid = provider.getMemberUid(token.substring(7));
-		
 	    // 결과 반환 + 파이선 서버 호출
-	    return ResponseEntity.ok(Map.of("data", localAi.requestGemma(data.getQuery(), data.getUuid(), mbUid))); 
+	    return ResponseEntity.ok(
+	    		Map.of(
+	    				"data",
+	    				localAi.requestGemma(data.getQuery(), data.getUuid(), userData.getMb_uid())
+    				)); 
 	}
 	
 	// 디버그 전용 (재사용 가능성 있으므로 주석 처리)
@@ -89,11 +86,12 @@ public class AIController {
 //	
 //	@PostMapping("/debug/chat")
 //	public ResponseEntity<?> debug(
-//			@RequestHeader("Authorization") String token,
+//			@AuthenticationPrincipal CustomUserDetails userData,
 //			@RequestBody AIRequestDTO data
 //			) {
 //		
-//		Long mbUid = provider.getMemberUid(token.substring(7));
+//		Long mbUid = userData.getMb_uid();
+//
 //		service.recordHistory(data.getUuid(), mbUid, data.getQuery(), "", 0);
 //		
 //		Map<String, Object> x = new HashMap<>();

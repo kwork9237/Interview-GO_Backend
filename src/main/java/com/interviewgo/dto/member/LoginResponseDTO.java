@@ -1,4 +1,4 @@
-package com.interviewgo.dto;
+package com.interviewgo.dto.member;
 
 import lombok.Builder;
 import lombok.Getter;

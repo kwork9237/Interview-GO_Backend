@@ -3,7 +3,8 @@ package com.interviewgo.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.interviewgo.dto.MemberDTO;
+import com.interviewgo.dto.member.MemberDTO;
+import com.interviewgo.dto.member.MemberUpdateDTO;
 
 /**
  * MemberMapper
@@ -36,7 +37,7 @@ public interface MemberMapper {
 
     MemberDTO getMemberByUid(Long mbUid);
 
-    int updateMember(MemberDTO member);
+    int updateMember(MemberUpdateDTO member);
 
     String selectPassword(Long mb_uid);
 

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.interviewgo.dto.MemberDTO;
+import com.interviewgo.dto.member.MemberDTO;
 import com.interviewgo.mapper.MemberMapper;
 
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.interviewgo.dto.MemberDTO; // MemberDTO import 필수
+import com.interviewgo.dto.member.MemberDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -23,19 +23,18 @@ public class ExamController {
 
     @PostMapping("/{id}/complete")
     public void completeExam(@PathVariable(name = "id") int uid, Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            
-            // ✅ DB에서 실제 등록된 문제 정보를 가져와서 외래키(언어ID)를 정확히 맞춤
-            ExamDTO examData = examMapper.getExamDetailByUid(uid);
-            
-            if (examData != null) {
-                // application.properties 설정 덕분에 exLangUid에 정확한 값이 담깁니다.
-                examService.recordExamHistory(username, uid, examData.getExLangUid());
-            }
-        } 
-        else {
+        // 얼리 리턴 패턴
+        if (authentication == null || !authentication.isAuthenticated()) {
         	examMapper.updateExamViewCount(uid);
+        	return;
+        }
+        
+        String username = authentication.getName();
+        ExamDTO examData = examMapper.getExamDetailByUid(uid);
+        
+        if (examData != null) {
+            // application.properties 설정 덕분에 exLangUid에 정확한 값이 담깁니다.
+            examService.recordExamHistory(username, uid, examData.getExLangUid());
         }
     }
 

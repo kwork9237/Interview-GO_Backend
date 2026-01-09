@@ -7,8 +7,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interviewgo.dto.MemberDTO;
 import com.interviewgo.dto.exam.ExamDTO;
+import com.interviewgo.dto.member.MemberDTO;
 import com.interviewgo.mapper.ExamMapper;
 import com.interviewgo.mapper.MemberMapper;
 

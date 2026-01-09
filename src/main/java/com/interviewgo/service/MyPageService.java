@@ -5,14 +5,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interviewgo.dto.MemberDTO;
-import com.interviewgo.dto.PasswordUpdateDTO;
 import com.interviewgo.dto.exam.ExamHistoryDTO;
 import com.interviewgo.dto.interview.InterviewHistoryDTO;
+import com.interviewgo.dto.member.MemberDTO;
+import com.interviewgo.dto.member.MemberUpdateDTO;
+import com.interviewgo.dto.member.PasswordUpdateDTO;
 import com.interviewgo.mapper.ExamMapper;
 import com.interviewgo.mapper.MemberMapper;
 import com.interviewgo.mapper.interview.InterviewHistoryMapper;
@@ -44,13 +46,49 @@ public class MyPageService {
 
 	// 회원 정보 수정
 	@Transactional
-	public boolean updateMember(MemberDTO member) {
-		if (member.getMb_nickname() != null && !member.getMb_nickname().isEmpty()) {
-			int count = memberMapper.checkNicknameDuplicate(member.getMb_nickname(), member.getMb_uid());
-			if (count > 0)
-				throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+	public ResponseEntity<?> updateMember(MemberUpdateDTO updateData) {
+		
+		// 데이터에서 UID 추출
+    	Long mbUid = updateData.getMb_uid();
+		
+    	if(mbUid == null)
+    		return ResponseEntity.badRequest().body("회원 UID가 누락되었습니다.");
+		
+    	// 기존 회원 정보 조회
+    	MemberDTO member = getMemberInfo(mbUid);
+    	if (member == null)
+            return ResponseEntity.status(400).body("존재하지 않는 회원입니다.");
+		
+    	// 비밀번호 검증 및 초기화
+    	String password = updateData.getMb_password();
+        if (password == null ||
+            !passwordEncoder.matches(password, member.getMb_password())
+            ) {
+            return ResponseEntity.status(400).body("비밀번호가 일치하지 않습니다.");
+        }
+		
+        updateData.setMb_password(null);
+		
+		// 회원 이름 검증
+		String mbName = updateData.getMb_nickname();
+		if (mbName == null || mbName.isEmpty() || mbName.equals(""))
+			return ResponseEntity.status(400).body("이름이 없거나 비어있습니다.");
+		
+		// 중복 이름 검사
+		int count = memberMapper.checkNicknameDuplicate(mbName, member.getMb_uid());
+		if (count > 0)
+			return ResponseEntity.status(400).body("이미 사용 중인 닉네임입니다.");
+		
+		// 실제 정보 update
+		try {
+			memberMapper.updateMember(updateData);
+			return ResponseEntity.ok("회원 정보가 수정되었습니다.");
 		}
-		return memberMapper.updateMember(member) > 0;
+		catch (Exception e) {
+            // 실제 에러 원인 확인용
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("서버 오류: " + e.getMessage());
+        }
 	}
 
 	// 닉네임 중복 확인

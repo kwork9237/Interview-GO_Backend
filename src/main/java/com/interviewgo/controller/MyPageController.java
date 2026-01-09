@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;       // 👈 상태 코드 (200, 400 등)
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interviewgo.dto.MemberDTO;
-import com.interviewgo.dto.PasswordUpdateDTO;
 import com.interviewgo.dto.exam.ExamHistoryDTO;
+import com.interviewgo.dto.member.MemberDTO;
+import com.interviewgo.dto.member.MemberUpdateDTO;
+import com.interviewgo.dto.member.PasswordUpdateDTO;
 import com.interviewgo.service.MemberService;
 import com.interviewgo.service.MyPageService;
 
@@ -47,12 +46,9 @@ public class MyPageController {
     // 마이페이지 관련 로직 전담 서비스
     private final MyPageService myPageService;
     
-    // 비밀번호 검증용 (BCrypt)
-    private final PasswordEncoder passwordEncoder;
-    
     // 회원 정보 조회용 서비스
     private final MemberService memberService;
-
+    
     // =================================================================================
     // 1. 내 프로필 정보 조회
     // =================================================================================
@@ -63,66 +59,71 @@ public class MyPageController {
         // UID 기준으로 회원 정보 조회
         MemberDTO member = memberService.getMemberByUid(mbUid);
         
-        if (member != null) {
-            // 보안상 비밀번호는 응답에서 제거
-            member.setMb_password(null);
-            return ResponseEntity.ok(member);
-        } else {
-            return ResponseEntity.status(404).body(null);
-        }
+        if (member == null)
+        	return ResponseEntity.status(404).body(null);
+        
+        // 비밀번호는 반환되면 보안 위험으로 인해 반환하지 않음.
+        member.setMb_password(null);
+        return ResponseEntity.ok(member);
     }
 
     // =================================================================================
     // 2. 회원 정보 수정
     // =================================================================================
     @PutMapping("/update")
-    public ResponseEntity<?> updateMember(@RequestBody Map<String, Object> payload) {
-        System.out.println("회원수정 요청 데이터: " + payload);
+    public ResponseEntity<?> updateMember(@RequestBody MemberUpdateDTO data) {
+        System.out.println("회원수정 요청 데이터: " + data);
         
-        try {
-            // 1. mb_uid 안전하게 파싱 (프론트 타입 불일치 대비)
-            String uidStr = String.valueOf(payload.get("mb_uid"));
-            if (uidStr == null || uidStr.equals("null")) {
-                return ResponseEntity.badRequest().body("회원 UID가 누락되었습니다.");
-            }
-            Long mbUid = Long.parseLong(uidStr);
-
-            // 2. 수정 요청 값 추출
-            String nickname = (String) payload.get("nickname");
-            String pnumber = (String) payload.get("pnumber");
-            String checkPassword = (String) payload.get("check_password");
-            String mbIcon = (String) payload.get("mb_icon");
-
-            // 3. 기존 회원 정보 조회
-            MemberDTO member = myPageService.getMemberInfo(mbUid);
-            if (member == null) {
-                return ResponseEntity.status(404).body("존재하지 않는 회원입니다.");
-            }
-
-            // 4. 비밀번호 검증
-            // - 입력한 비밀번호 vs DB에 저장된 암호화 비밀번호
-            if (checkPassword == null ||
-                !passwordEncoder.matches(checkPassword, member.getMb_password())) {
-                return ResponseEntity.status(401).body("비밀번호가 일치하지 않습니다.");
-            }
-
-            // 5. 수정할 정보만 DTO에 담아서 전달
-            MemberDTO updateDTO = new MemberDTO();
-            updateDTO.setMb_uid(mbUid);
-            updateDTO.setMb_nickname(nickname);
-            updateDTO.setMb_pnumber(pnumber);
-            updateDTO.setMb_icon(mbIcon);
-
-            myPageService.updateMember(updateDTO);
-            
-            return ResponseEntity.ok("회원 정보가 수정되었습니다.");
-
-        } catch (Exception e) {
-            // 실제 에러 원인 확인용
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("서버 오류: " + e.getMessage());
-        }
+        return myPageService.updateMember(data);
     }
+    
+//    public ResponseEntity<?> updateMember(@RequestBody Map<String, Object> payload) {
+//        System.out.println("회원수정 요청 데이터: " + payload);
+//        
+//        try {
+//            // 1. mb_uid 안전하게 파싱 (프론트 타입 불일치 대비)
+//            String uidStr = String.valueOf(payload.get("mb_uid"));
+//            if (uidStr == null || uidStr.equals("null")) {
+//                return ResponseEntity.badRequest().body("회원 UID가 누락되었습니다.");
+//            }
+//            Long mbUid = Long.parseLong(uidStr);
+//
+//            // 2. 수정 요청 값 추출
+//            String nickname = (String) payload.get("nickname");
+//            String pnumber = (String) payload.get("pnumber");
+//            String checkPassword = (String) payload.get("check_password");
+//            String mbIcon = (String) payload.get("mb_icon");
+//
+//            // 3. 기존 회원 정보 조회
+//            MemberDTO member = myPageService.getMemberInfo(mbUid);
+//            if (member == null) {
+//                return ResponseEntity.status(404).body("존재하지 않는 회원입니다.");
+//            }
+//
+//            // 4. 비밀번호 검증
+//            // - 입력한 비밀번호 vs DB에 저장된 암호화 비밀번호
+//            if (checkPassword == null ||
+//                !passwordEncoder.matches(checkPassword, member.getMb_password())) {
+//                return ResponseEntity.status(401).body("비밀번호가 일치하지 않습니다.");
+//            }
+//
+//            // 5. 수정할 정보만 DTO에 담아서 전달
+//            MemberDTO updateDTO = new MemberDTO();
+//            updateDTO.setMb_uid(mbUid);
+//            updateDTO.setMb_nickname(nickname);
+//            updateDTO.setMb_pnumber(pnumber);
+//            updateDTO.setMb_icon(mbIcon);
+//
+//            myPageService.updateMember(updateDTO);
+//            
+//            return ResponseEntity.ok("회원 정보가 수정되었습니다.");
+//
+//        } catch (Exception e) {
+//            // 실제 에러 원인 확인용
+//            e.printStackTrace();
+//            return ResponseEntity.status(500).body("서버 오류: " + e.getMessage());
+//        }
+//    }
 
     // =================================================================================
     // 3. 닉네임 중복 확인

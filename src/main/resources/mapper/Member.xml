@@ -53,7 +53,7 @@
 		WHERE mb_uid = #{mb_uid}
 	</update>
 
-    <update id="updateMember" parameterType="member">
+    <update id="updateMember" parameterType="memberUpdate">
 		UPDATE member
 		<set>
 			<if test="mb_password != null and mb_password != ''">

@@ -19,5 +19,6 @@ public class AIResponseDTO {
 		private String answer;
 		private Double score;
 		private String feedback;
+		private boolean isLast;
 	}
 }

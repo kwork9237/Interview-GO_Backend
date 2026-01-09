@@ -76,54 +76,6 @@ public class MyPageController {
         
         return myPageService.updateMember(data);
     }
-    
-//    public ResponseEntity<?> updateMember(@RequestBody Map<String, Object> payload) {
-//        System.out.println("회원수정 요청 데이터: " + payload);
-//        
-//        try {
-//            // 1. mb_uid 안전하게 파싱 (프론트 타입 불일치 대비)
-//            String uidStr = String.valueOf(payload.get("mb_uid"));
-//            if (uidStr == null || uidStr.equals("null")) {
-//                return ResponseEntity.badRequest().body("회원 UID가 누락되었습니다.");
-//            }
-//            Long mbUid = Long.parseLong(uidStr);
-//
-//            // 2. 수정 요청 값 추출
-//            String nickname = (String) payload.get("nickname");
-//            String pnumber = (String) payload.get("pnumber");
-//            String checkPassword = (String) payload.get("check_password");
-//            String mbIcon = (String) payload.get("mb_icon");
-//
-//            // 3. 기존 회원 정보 조회
-//            MemberDTO member = myPageService.getMemberInfo(mbUid);
-//            if (member == null) {
-//                return ResponseEntity.status(404).body("존재하지 않는 회원입니다.");
-//            }
-//
-//            // 4. 비밀번호 검증
-//            // - 입력한 비밀번호 vs DB에 저장된 암호화 비밀번호
-//            if (checkPassword == null ||
-//                !passwordEncoder.matches(checkPassword, member.getMb_password())) {
-//                return ResponseEntity.status(401).body("비밀번호가 일치하지 않습니다.");
-//            }
-//
-//            // 5. 수정할 정보만 DTO에 담아서 전달
-//            MemberDTO updateDTO = new MemberDTO();
-//            updateDTO.setMb_uid(mbUid);
-//            updateDTO.setMb_nickname(nickname);
-//            updateDTO.setMb_pnumber(pnumber);
-//            updateDTO.setMb_icon(mbIcon);
-//
-//            myPageService.updateMember(updateDTO);
-//            
-//            return ResponseEntity.ok("회원 정보가 수정되었습니다.");
-//
-//        } catch (Exception e) {
-//            // 실제 에러 원인 확인용
-//            e.printStackTrace();
-//            return ResponseEntity.status(500).body("서버 오류: " + e.getMessage());
-//        }
-//    }
 
     // =================================================================================
     // 3. 닉네임 중복 확인

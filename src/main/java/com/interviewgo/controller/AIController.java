@@ -1,5 +1,6 @@
 package com.interviewgo.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.ai.AIRequestDTO;
 import com.interviewgo.dto.ai.AIResponseDTO;
+import com.interviewgo.service.InterviewService;
+import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.ai.ApiAIService;
 import com.interviewgo.service.ai.LocalAIService;
 import com.interviewgo.service.jwt.CustomUserDetails;
@@ -82,26 +85,26 @@ public class AIController {
 	}
 	
 	// 디버그 전용 (재사용 가능성 있으므로 주석 처리)
-//	private final InterviewService service;
-//	
-//	@PostMapping("/debug/chat")
-//	public ResponseEntity<?> debug(
-//			@AuthenticationPrincipal CustomUserDetails userData,
-//			@RequestBody AIRequestDTO data
-//			) {
-//		
-//		Long mbUid = userData.getMb_uid();
-//
-//		service.recordHistory(data.getUuid(), mbUid, data.getQuery(), "", 0);
-//		
-//		Map<String, Object> x = new HashMap<>();
-//		x.put("answer", "debug answer");
-//		x.put("score", 99.9);
-//		x.put("feedback", "debug feedback");
-//		x.put("isLast", true);
-//		
-//		service.recordHistory(data.getUuid(), mbUid, "debug answer", "debug feedback", 99.9);
-//		
-//		return ResponseEntity.ok(Map.of("data", x));
-//	}
+	private final InterviewService service;
+	
+	@PostMapping("/debug/chat")
+	public ResponseEntity<?> debug(
+			@AuthenticationPrincipal CustomUserDetails userData,
+			@RequestBody AIRequestDTO data
+			) {
+		
+		Long mbUid = userData.getMb_uid();
+
+		short s = service.recordHistory(data.getUuid(), mbUid, data.getQuery(), "", 0);
+		
+		Map<String, Object> x = new HashMap<>();
+		x.put("answer", "debug answer");
+		x.put("score", 99.9);
+		x.put("feedback", "debug feedback");
+		x.put("isLast", s >= 6);
+		
+		service.recordHistory(data.getUuid(), mbUid, "debug answer", "debug feedback", 99.9);
+		
+		return ResponseEntity.ok(Map.of("data", x));
+	}
 }

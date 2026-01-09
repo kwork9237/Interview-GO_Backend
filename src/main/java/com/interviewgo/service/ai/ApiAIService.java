@@ -70,6 +70,7 @@ public class ApiAIService {
 	        .entity(AIResponseDTO.Chat.class);
 		
 		service.recordHistory(ssid, mbUid, res.getAnswer(), res.getFeedback(), res.getScore());
+		res.setLast(step >= 6);
 
 		return res;
 	}

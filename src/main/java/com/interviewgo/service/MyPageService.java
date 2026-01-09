@@ -107,21 +107,23 @@ public class MyPageService {
 	// 비밀번호 변경 로직 [2026-01-06 추가]
 	@Transactional
 	public void updatePassword(PasswordUpdateDTO dto) {
-		String dbPassword = memberMapper.selectPassword(dto.getMb_uid());
+		
+		MemberDTO mbData = memberMapper.getMemberByUid(dto.getMb_uid());
 
-		if (dbPassword == null) {
+		if (mbData == null) {
 			throw new RuntimeException("사용자 정보를 찾을 수 없습니다.");
 		}
 
 		// 1. 현재 비밀번호 검증 (입력한 비번 vs DB 암호화된 비번)
-		if (!passwordEncoder.matches(dto.getCurrentPassword(), dbPassword)) {
+		if (!passwordEncoder.matches(dto.getCurrentPassword(), mbData.getMb_password())) {
 			throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
 		}
 
 		// 2. 새 비밀번호 암호화
 		String encodedNewPassword = passwordEncoder.encode(dto.getNewPassword());
+		mbData.setMb_password(encodedNewPassword);
 
 		// 3. DB 업데이트
-		memberMapper.updatePasswordByUid(dto.getMb_uid(), encodedNewPassword);
+		memberMapper.updatePasswordByUid(mbData);
 	}
 }

@@ -16,12 +16,15 @@
         WHERE username = #{username}
     </select>
     
-    <select id="checkUserExists" parameterType="member" resultType="int">
-        SELECT COUNT(*)
-        FROM member
-        WHERE username = #{username}
+    <select id="getMemberForPasswordReset" parameterType="member" resultType="member">
+	    SELECT 
+	        mb_uid, 
+	        username, 
+	        mb_pnumber
+	    FROM member
+	    WHERE username = #{username} 
 			AND mb_pnumber = #{mb_pnumber}
-    </select>
+	</select>
 
     <insert id="insertMember" parameterType="member">
 		INSERT INTO member (
@@ -44,10 +47,10 @@
 		)
 	</insert>
 
-    <update id="updatePassword" parameterType="member">
+	<update id="updatePasswordByUid" parameterType="member">
 		UPDATE member
 		SET mb_password = #{mb_password}
-		WHERE username = #{username}
+		WHERE mb_uid = #{mb_uid}
 	</update>
 
     <update id="updateMember" parameterType="member">
@@ -80,12 +83,6 @@
         FROM member
         WHERE mb_uid = #{mbUid}
     </select>
-    
-    <update id="updatePasswordByUid">
-		UPDATE member
-		SET mb_password = #{mb_password}
-		WHERE mb_uid = #{mb_uid}
-	</update>
 
     <select id="checkNicknameDuplicate" resultType="int">
 		SELECT COUNT(*)
@@ -93,7 +90,6 @@
 		WHERE mb_nickname = #{nickname}
 			AND mb_uid != #{mb_uid}
 	</select>
-
 
 	<delete id="deleteMember" parameterType="Long">
 		DELETE FROM member 

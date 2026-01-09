@@ -47,7 +47,7 @@
         WHERE ex_uid = #{id}
     </select>
     
-    <update id="updateㅂExamViewCount">
+    <update id="updateExamViewCount">
         UPDATE exam 
         SET view_count = IFNULL(view_count, 0) + 1 
         WHERE

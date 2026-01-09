@@ -2,15 +2,12 @@ package com.interviewgo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.YoutubeDTO;
-import com.interviewgo.jwt.JwtTokenProvider;
-import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.YoutubeService;
 
 import lombok.RequiredArgsConstructor;

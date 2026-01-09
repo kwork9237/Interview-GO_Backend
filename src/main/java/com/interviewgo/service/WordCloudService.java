@@ -92,4 +92,9 @@ public class WordCloudService {
             wordCloudMapper.upsertWord(dto); 
         });
     }
+    
+    // 목록 조회 (Service의 일관성 유지)
+    public List<WordCloudDTO> getTopWords() {
+    	return wordCloudMapper.selectTopWords();
+    }
 }

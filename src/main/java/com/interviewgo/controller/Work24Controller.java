@@ -2,15 +2,11 @@ package com.interviewgo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.WorkNewsDTO;
-import com.interviewgo.jwt.JwtTokenProvider;
-import com.interviewgo.mapper.Work24Mapper;
-import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.Work24Service;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/work24")
 public class Work24Controller {
     private final Work24Service work24Service;
-    private final Work24Mapper work24Mapper;
-
+    
     /**
      * 고용24 오픈 API를 호출하여 최신 IT 채용 정보를 DB에 수집/갱신합니다.
      * 수동으로 데이터를 갱신하고 싶을 때 브라우저에서 직접 호출 가능합니다.
@@ -42,6 +37,6 @@ public class Work24Controller {
      */
     @GetMapping("/list")
     public List<WorkNewsDTO> getJobList() {
-        return work24Mapper.selectNewsList(); // DB에서 전체 목록 가져오기
+        return work24Service.getNewsList(); // DB에서 전체 목록 가져오기
     }
 }

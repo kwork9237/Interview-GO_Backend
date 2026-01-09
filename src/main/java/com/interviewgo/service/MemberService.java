@@ -51,9 +51,9 @@ public class MemberService {
 	public String createTempPassword(MemberDTO member) {
 		
         // 1. 회원 정보 확인
-        int count = memberMapper.checkUserExists(member);
+        MemberDTO mbData = memberMapper.getMemberForPasswordReset(member);
         
-        if (count == 0) {
+        if (mbData == null) {
             throw new IllegalArgumentException("일치하는 회원 정보를 찾을 수 없습니다.");
         }
 
@@ -64,11 +64,9 @@ public class MemberService {
         String encodedPw = passwordEncoder.encode(tempPw);
 
         // 4. DB 업데이트
-        MemberDTO mem = new MemberDTO();
-        mem.setUsername(member.getUsername());
-        mem.setMb_password(encodedPw);
+        mbData.setMb_password(encodedPw);
         
-        memberMapper.updatePassword(mem);
+        memberMapper.updatePasswordByUid(mbData);
 
         // 5. 사용자에게 보여줄 원본 임시비번 반환
         return tempPw;
@@ -96,7 +94,4 @@ public class MemberService {
 	            .user(userInfo)
 	            .build();
 	}
-
-
-	
 }

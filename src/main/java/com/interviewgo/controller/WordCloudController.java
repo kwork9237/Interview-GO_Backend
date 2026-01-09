@@ -2,16 +2,11 @@ package com.interviewgo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interviewgo.dto.WordCloudDTO;
-import com.interviewgo.jwt.JwtTokenProvider;
-import com.interviewgo.mapper.WordCloudMapper;
-import com.interviewgo.service.InterviewService;
 import com.interviewgo.service.WordCloudService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/wordcloud")
 public class WordCloudController {
     private final WordCloudService wordCloudService;
-    private final WordCloudMapper wordCloudMapper;
 
     // 데이터 수집 실행 (관리자용)
     @GetMapping("/admin/update-all")
@@ -38,6 +32,6 @@ public class WordCloudController {
     // 리액트 조회용 (사용자용)
     @GetMapping("/list")
     public List<WordCloudDTO> getList() {
-        return wordCloudMapper.selectTopWords();
+        return wordCloudService.getTopWords();
     }
 }

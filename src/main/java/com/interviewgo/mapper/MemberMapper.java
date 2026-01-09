@@ -16,29 +16,23 @@ import com.interviewgo.dto.MemberDTO;
 public interface MemberMapper {
 
     // ====================================================
-    // 1. 로그인 & 회원가입 (공통)
+    // 1. 로그인 & 회원가입
     // ====================================================
 
     int insertMember(MemberDTO member);
 
-    // 이전에 getMemberById 여기로
     MemberDTO getMemberByUsername(String username);
 
     int countByUsername(String username);
 
 
     // ====================================================
-    // 2. 비밀번호 찾기 (조원 기능)
+    // 2. 비밀번호 찾기
     // ====================================================
 
-    int checkUserExists(MemberDTO member);
+    MemberDTO getMemberForPasswordReset(MemberDTO member);
 
-    void updatePassword(MemberDTO member);
-
-
-    // ====================================================
-    // 3. 마이페이지 (내 기능)
-    // ====================================================
+    // 3. 마이페이지
 
     MemberDTO getMemberByUid(Long mbUid);
 
@@ -51,11 +45,7 @@ public interface MemberMapper {
         @Param("mb_uid") Long mb_uid
     );
 
-    /**
-     * [추가됨] 마이페이지용 비밀번호 변경 (mb_uid 기준)
-     * - 이름을 'updatePasswordByUid'로 변경해서 충돌을 피합니다.
-     */
-    void updatePasswordByUid(@Param("mb_uid") Long mbUid, @Param("mb_password") String password);
+    void updatePasswordByUid(MemberDTO member);
 
     // 회원정보삭제
     int deleteMember(Long mb_uid);

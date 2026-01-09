@@ -1,6 +1,7 @@
 package com.interviewgo.service;
 
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -74,5 +75,10 @@ public class Work24Service {
     private String getTagValue(String tag, Element element) {
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
         return (nodeList != null && nodeList.getLength() > 0) ? nodeList.item(0).getNodeValue() : "";
+    }
+    
+    // 목록 조회 (Service의 일관성 유지)
+    public List<WorkNewsDTO> getNewsList() {
+    	return work24Mapper.selectNewsList();
     }
 }

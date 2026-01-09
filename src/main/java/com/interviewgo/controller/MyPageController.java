@@ -222,6 +222,4 @@ public class MyPageController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    
-    
 }
